@@ -3,6 +3,12 @@ project(core-vm)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(SANITIZER_FLAGS "-fsanitize=address,undefined,leak")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZER_FLAGS}")
+
 set(SOURCE_FILES
     src/parser.cpp
     src/lexer.cpp

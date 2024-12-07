@@ -15,7 +15,7 @@ int main(int argc, char **argv)
   }
   const char *filename = argv[1];
   CoreVMLexer lexer{FileInputStream(filename)};
-  std::vector<CoreVMADT> result = lexer.DoParse();
+  const std::vector<CoreVMADT> &result = lexer.DoParse();
   std::ostringstream os;
   lexer.Serialize(os);
   std::cout << os.str() << std::endl;
