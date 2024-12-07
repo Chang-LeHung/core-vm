@@ -158,7 +158,7 @@ CoreVMADT::~CoreVMADT()
 {
   if (_tag == SymbolType::kString)
   {
-    delete _data.sval;
+    delete[] _data.sval;
   }
 }
 

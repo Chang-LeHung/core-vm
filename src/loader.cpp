@@ -27,5 +27,5 @@ FileInputStream::FileInputStream(const char *buf, std::size_t size)
 FileInputStream::~FileInputStream()
 {
   if (_buffer != nullptr)
-    delete _buffer;
+    delete[] _buffer;
 }
