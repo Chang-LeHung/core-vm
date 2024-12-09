@@ -76,7 +76,7 @@ public:
       int new_size = _capacity << 1;
       assert(new_size > 0);
       char *buf = new char[new_size];
-      std::memcpy(buf, _code, _capacity);
+      std::memcpy(buf, _code, _pos);
       _capacity = new_size;
       delete[] _code;
       _code = buf;
