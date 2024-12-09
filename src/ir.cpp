@@ -8,6 +8,8 @@
 
 void BinaryIR::emit(CVMAssembler &assembler) const
 {
+  _rhs->emit(assembler);
+  _lhs->emit(assembler);
   switch (_op)
   {
   case OpCode::kIAdd:
@@ -57,7 +59,7 @@ void BinaryIR::emit(CVMAssembler &assembler) const
   }
 }
 
-void Variable::emit(CVMAssembler &assembler) const
+void VariableIR::emit(CVMAssembler &assembler) const
 {
   if (IsIntRes())
     assembler.WriteStream(static_cast<u2>(OpCode::kLoadI));
@@ -84,8 +86,8 @@ void Constant::emit(CVMAssembler &assembler) const
     assembler.WriteStream(static_cast<u2>(OpCode::kFConst));
     assembler.WriteStream(static_cast<f4>(_val.GetFloatADT()));
     break;
-  case OpCode::kDconst:
-    assembler.WriteStream(static_cast<u2>(OpCode::kDconst));
+  case OpCode::kDConst:
+    assembler.WriteStream(static_cast<u2>(OpCode::kDConst));
     assembler.WriteStream(static_cast<f8>(_val.GetDoubleADT()));
     break;
   case OpCode::kLConst:
@@ -97,7 +99,7 @@ void Constant::emit(CVMAssembler &assembler) const
   }
 }
 
-void Store::emit(CVMAssembler &assembler) const
+void StoreIR::emit(CVMAssembler &assembler) const
 {
   if (IsIntRes())
     assembler.WriteStream(static_cast<u2>(OpCode::kStoreI));
@@ -118,4 +120,19 @@ void ProgramIR::emit(CVMAssembler &assembler) const
   {
     ir->emit(assembler);
   }
+}
+
+void AssignStmtIR::emit(CVMAssembler &assembler) const
+{
+  // post order traversal
+  _rhs->emit(assembler);
+  _lhs->emit(assembler);
+}
+
+void DefinitionIR::emit(CVMAssembler &assembler) const
+{
+}
+
+void NopIR::emit(CVMAssembler &assembler) const
+{
 }

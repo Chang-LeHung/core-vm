@@ -30,11 +30,17 @@ public:
 private:
   std::shared_ptr<IR> Program();
 
+  std::shared_ptr<AssignStmtIR> ExtraceAssignIR(const std::string &type_name,
+                                                const std::string &symbol,
+                                                int loc);
+
   std::shared_ptr<IR> Statement();
 
   std::shared_ptr<IR> Expression();
 
-  std::shared_ptr<IR> Atom();
+  std::shared_ptr<IR> Term();
+
+  std::shared_ptr<IR> Primary();
 
   int AddSymbol(const std::string &symbol, const std::string &type_name);
 

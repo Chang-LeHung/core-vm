@@ -11,6 +11,7 @@ enum class SymbolType
 {
   kString,
   kInt,
+  kLong,
   kDouble,
   kFloat,
   kLParentheses,
@@ -80,6 +81,24 @@ public:
   inline bool IsFloat() const { return _tag == SymbolType::kFloat; }
 
   inline bool IsSemicolon() const { return _tag == SymbolType::kSemicolon; }
+
+  inline bool IsPlus() const { return _tag == SymbolType::kPlus; }
+
+  inline bool IsMinus() const { return _tag == SymbolType::kMinus; }
+
+  inline bool IsMul() const { return _tag == SymbolType::kMul; }
+
+  inline bool IsDiv() const { return _tag == SymbolType::kDiv; }
+
+  inline bool IsLParentheses() const
+  {
+    return _tag == SymbolType::kLParentheses;
+  }
+
+  inline bool IsRParentheses() const
+  {
+    return _tag == SymbolType::kRParentheses;
+  }
 
   inline bool IsEq() const { return _tag == SymbolType::kEq; }
 

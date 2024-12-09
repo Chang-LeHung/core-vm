@@ -3,9 +3,15 @@
 #include "parser.h"
 #include "ir.h"
 #include "lexer.h"
+#include "opcode.h"
+#include "types.h"
 #include "util.h"
+#include <cassert>
+#include <cstdio>
 #include <fcntl.h>
+#include <linux/limits.h>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <utility>
 
@@ -20,8 +26,8 @@ CVMType CVMType::GetOrCreateType(const std::string &name)
   }
   else
   {
-    CVMType type = GetOrCreateType(name);
-    _type_set[name] = type;
+    CVMType type(name);
+    _type_set.insert({name, type});
     return type;
   }
 }
@@ -36,8 +42,30 @@ bool CVMType::ContainType(const CVMType &t)
   return _type_set.find(t.GetName()) != _type_set.end();
 }
 
-std::shared_ptr<IR> Parser::Atom()
+std::shared_ptr<IR> Parser::Term()
 {
+  auto res = Primary();
+  while (HashNext())
+  {
+    if (Next(false).IsMul())
+    {
+      Next(); // eat the token
+      auto rhs = Primary();
+      res = std::make_shared<BinaryIR>(OpCode::kIMul, res, rhs);
+    }
+    else if (Next(false).IsDiv())
+    {
+      Next(); // eat the token
+      auto rhs = Primary();
+      res = std::make_shared<BinaryIR>(OpCode::kIDiv, res, rhs);
+    }
+    else
+    {
+      break;
+    }
+  }
+
+  return res;
 }
 
 std::shared_ptr<IR> Parser::Build()
@@ -56,6 +84,24 @@ std::shared_ptr<IR> Parser::Program()
   return program;
 }
 
+std::shared_ptr<AssignStmtIR>
+Parser::ExtraceAssignIR(const std::string &type_name, const std::string &symbol,
+                        int loc)
+{
+  auto expr = Expression();
+  auto store = std::make_shared<StoreIR>(
+      symbol, loc, CVMType::GetOrCreateType(type_name),
+      GetStoreOpcodeByType(CVMType::GetOrCreateType(type_name)));
+  if (expr->GetResType() != store->GetResType()) [[unlikely]]
+  {
+    char error_msg[ERROR_MSG_LEN];
+    assert(symbol.size() < MAX_VAR_LEN);
+    std::sprintf(error_msg, "type mismatch var name is %s", symbol.c_str());
+    panic(error_msg, __FILE__, __LINE__);
+  }
+  return std::make_shared<AssignStmtIR>(store, expr, expr->GetResType());
+}
+
 std::shared_ptr<IR> Parser::Statement()
 {
   auto &token = Next();
@@ -64,24 +110,30 @@ std::shared_ptr<IR> Parser::Statement()
   switch (token.GetTag())
   {
   case SymbolType::kString:
+  {
     buf = token.GetCharPtrADT();
     name = std::string(buf);
-    if (CVMType::ContainType(name) && HashNext() && Next(false).IsString() // look ahead
-    )
+    if (CVMType::ContainType(name) && HashNext() && Next(false).IsString())
     {
       auto nxt_s = std::string(Next().GetCharPtrADT());
       if (HashNext())
       {
+        int loc = AddSymbol(nxt_s, name);
         if (Next(false).IsSemicolon())
         {
           // a declaration
           Next(); // eat semicolon
-          AddSymbol(nxt_s, name);
+          return std::make_shared<DefinitionIR>(nxt_s, loc,
+                                                CVMType::GetOrCreateType(name));
         }
         else if (Next(false).IsEq())
         {
           Next(); // eat equal
-          auto expr = Expression();
+          return ExtraceAssignIR(name, nxt_s, loc);
+        }
+        else
+        {
+          panic("illegal statement", __FILE__, __LINE__);
         }
       }
       else
@@ -91,23 +143,47 @@ std::shared_ptr<IR> Parser::Statement()
     }
     else
     {
+      if (HashNext() && Next(false).IsEq())
+      {
+        Next(); // eat assign
+        // return ExtraceAssignIR(name, nxt_s, loc);
+      }
+      panic("expected a eq", __FILE__, __LINE__);
     }
-    break;
+  }
+  case SymbolType::kSemicolon:
+    return std::make_shared<NopIR>();
   default:
     panic("unexpected token in statement", __FILE__, __LINE__);
   }
-  return std::make_shared<IR>(OpCode::kNop, void_op);
 }
 
 std::shared_ptr<IR> Parser::Expression()
 {
-  return std::make_shared<IR>(OpCode::kNop, void_op);
+  auto res = Term();
+  while (HashNext())
+  {
+    if (Next(false).IsPlus())
+    {
+      Next();
+      res = std::make_shared<BinaryIR>(OpCode::kIAdd, res, Term());
+    }
+    else if (Next(false).IsMinus())
+    {
+      Next();
+      res = std::make_shared<BinaryIR>(OpCode::kISub, res, Term());
+    }
+    else
+      break;
+  }
+  return res;
 }
 
 int Parser::AddSymbol(const std::string &symbol, const std::string &type_name)
 {
   int size = _symbol_table.size();
-  _symbol_table[symbol] = std::make_pair(size, CVMType::GetOrCreateType(type_name));
+  _symbol_table.insert(
+      {symbol, std::make_pair(size, CVMType::GetOrCreateType(type_name))});
   return size;
 }
 
@@ -117,6 +193,53 @@ int Parser::SymbolIx(const std::string &symbol) const
   if (it == _symbol_table.end())
     return -1;
   return it->second.first;
+}
+
+std::shared_ptr<IR> Parser::Primary()
+{
+  if (!HashNext())
+    panic("Primary require a token", __FILE__, __LINE__);
+  auto token = Next();
+  switch (token.GetTag())
+  {
+  case SymbolType::kInt:
+    return std::make_shared<Constant>(token, OpCode::kIConst,
+                                      CVMType::GetOrCreateType("int"));
+  case SymbolType::kFloat:
+    return std::make_shared<Constant>(token, OpCode::kFConst,
+                                      CVMType::GetOrCreateType("float"));
+  case SymbolType::kLong:
+    return std::make_shared<Constant>(token, OpCode::kLConst,
+                                      CVMType::GetOrCreateType("long"));
+  case SymbolType::kDouble:
+    return std::make_shared<Constant>(token, OpCode::kDConst,
+                                      CVMType::GetOrCreateType("double"));
+  case SymbolType::kString:
+  {
+    // load a variable
+    auto var_name = std::string(token.GetCharPtrADT());
+    auto it = _symbol_table.find(var_name);
+    if (it == _symbol_table.end()) [[unlikely]]
+    {
+      char buf[ERROR_MSG_LEN];
+      std::sprintf(buf, "unknown variable: %s", var_name.c_str());
+      panic(buf, __FILE__, __LINE__);
+    }
+    return std::make_shared<VariableIR>(var_name, it->second.first,
+                                        GetLoadOpcodeByType(it->second.second),
+                                        it->second.second);
+  }
+  case SymbolType::kLParentheses:
+  {
+    auto res = Expression();
+    auto token = Next();
+    if (token.GetTag() != SymbolType::kRParentheses)
+      panic("require )", __FILE__, __LINE__);
+    return res;
+  }
+  default:
+    panic("Primary require a number or string", __FILE__, __LINE__);
+  }
 }
 
 void CVMType::InitIntrinsicType()

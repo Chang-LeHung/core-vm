@@ -4,9 +4,8 @@
 #include <iostream>
 #include <ostream>
 
-int main() {
-  Parser parse;
+int main()
+{
   printf("core-vm end\n");
-  std::cout << add(1 << 10, 1024) << std::endl;
   return 0;
 }

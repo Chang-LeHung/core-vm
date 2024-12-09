@@ -144,6 +144,9 @@ void CoreVMADT::Serialize(std::ostream &os)
   case SymbolType::kPlus:
     os << '+';
     break;
+  case SymbolType::kSemicolon:
+    os << ';';
+    break;
   default:
     panic("Invalid symbol type", __FILE__, __LINE__);
   }
@@ -175,7 +178,8 @@ const std::vector<CoreVMADT> &CoreVMLexer::DoParse()
 {
   char c;
   char buf[1024];
-#define MEMCPY(buf, _is, begin_pos, end_pos) std::memcpy(buf, (char *)_is.Buffer() + begin_pos, end_pos - begin_pos)
+#define MEMCPY(buf, _is, begin_pos, end_pos)                                   \
+  std::memcpy(buf, (char *)_is.Buffer() + begin_pos, end_pos - begin_pos)
   while (_is.HasNext())
   {
     c = _is.Next();
@@ -202,10 +206,15 @@ const std::vector<CoreVMADT> &CoreVMLexer::DoParse()
       else
       {
         assert(dotn == 0);
-        _tokens.emplace_back(atoi(buf), SymbolType::kInt);
+        if (c != 'L') [[unlikely]]
+          _tokens.emplace_back(atoi(buf), SymbolType::kInt);
+        else
+        {
+          _tokens.emplace_back(atol(buf), SymbolType::kLong);
+          c = _is.Next();
+        }
       }
-      if (_is.HasNext())
-        _is.Back();
+      _is.Back();
     }
     else if (std::isalpha(c) || c == '_')
     {

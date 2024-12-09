@@ -10,6 +10,8 @@
 #define u8 uint64_t
 #define f8 double
 #define f4 float
+#define MAX_VAR_LEN 64
+#define ERROR_MSG_LEN 128
 
 class CVMType
 {
@@ -23,6 +25,8 @@ private:
 
 public:
   bool operator==(const CVMType &other) const { return _name == other._name; }
+
+  bool operator!=(const CVMType &other) const { return _name != other._name; }
 
   CVMType(std::string name) : _name(name) {}
 
