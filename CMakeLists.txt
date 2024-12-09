@@ -14,6 +14,9 @@ set(SOURCE_FILES
     src/lexer.cpp
     src/loader.cpp
     src/util.cpp
+    src/ir.cpp
+    src/assembler.cpp
+    src/types.cpp
 )
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 

@@ -1,23 +1,53 @@
 
 #pragma once
+
+#include "ir.h"
+#include "lexer.h"
+#include <fcntl.h>
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 class Parser
 {
+
+private:
+  std::vector<CoreVMADT> _tokens;
+  std::unordered_map<std::string, std::pair<int, CVMType>> _symbol_table;
+  int _pos;
+
 public:
-  auto parse(const std::string &filename);
-};
+  Parser(const std::vector<CoreVMADT> &tokens) : _tokens(tokens), _pos(0)
+  {
+    if (_tokens.empty())
+      panic("empty tokens", __FILE__, __LINE__);
+  }
 
-enum class CoreVMType
-{
-  kInt,
-  kLong,
-  kDouble,
-  kFloat,
-  kIntArr,
-  kLongArr,
-  kDoubleArr,
-  kFloatArr,
-};
+  std::shared_ptr<IR> Build();
 
-auto add(int a, int b) -> int;
+private:
+  std::shared_ptr<IR> Program();
+
+  std::shared_ptr<IR> Statement();
+
+  std::shared_ptr<IR> Expression();
+
+  std::shared_ptr<IR> Atom();
+
+  int AddSymbol(const std::string &symbol, const std::string &type_name);
+
+  int SymbolIx(const std::string &symbol) const;
+
+  inline bool HashNext() const { return _pos < _tokens.size(); }
+
+  const CoreVMADT &Next(bool forward = true)
+  {
+    if (forward)
+    {
+      return _tokens[_pos++];
+    }
+    return _tokens[_pos];
+  }
+};

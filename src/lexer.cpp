@@ -96,6 +96,11 @@ int CoreVMADT::GetIntADT() const
   return _data.ival;
 }
 
+long CoreVMADT::GetLongADT() const
+{
+  return _data.lval;
+}
+
 void CoreVMADT::Serialize(std::ostream &os)
 {
   switch (_tag)
@@ -220,7 +225,6 @@ const std::vector<CoreVMADT> &CoreVMLexer::DoParse()
     }
     else if (c == '[')
     {
-      _is.Skip();
       _tokens.emplace_back('[', SymbolType::kLBrace);
     }
     else if (c == ']')
@@ -233,7 +237,6 @@ const std::vector<CoreVMADT> &CoreVMLexer::DoParse()
     }
     else if (c == ')')
     {
-      _is.Skip();
       _tokens.emplace_back(')', SymbolType::kRParentheses);
     }
     else if (c == ' ' || c == '\n')
@@ -258,6 +261,10 @@ const std::vector<CoreVMADT> &CoreVMLexer::DoParse()
     else if (c == '=')
     {
       _tokens.emplace_back('=', SymbolType::kEq);
+    }
+    else if (c == ';')
+    {
+      _tokens.emplace_back(';', SymbolType::kSemicolon);
     }
     else
     {

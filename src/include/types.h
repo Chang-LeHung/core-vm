@@ -1,6 +1,8 @@
 
 #pragma once
 #include <stdint.h>
+#include <string>
+#include <unordered_map>
 
 #define u1 uint8_t
 #define u2 uint16_t
@@ -8,3 +10,38 @@
 #define u8 uint64_t
 #define f8 double
 #define f4 float
+
+class CVMType
+{
+public:
+  static std::unordered_map<std::string, CVMType> _type_set;
+
+  static void InitIntrinsicType();
+
+private:
+  std::string _name;
+
+public:
+  bool operator==(const CVMType &other) const { return _name == other._name; }
+
+  CVMType(std::string name) : _name(name) {}
+
+  CVMType(const CVMType &type) { _name = type._name; }
+
+  const std::string &GetName() const { return _name; }
+
+  static CVMType GetOrCreateType(const std::string &name);
+
+  static inline bool ContainType(const std::string &name);
+  static inline bool ContainType(const CVMType &type);
+};
+
+extern CVMType void_op;
+
+namespace std
+{
+template <> struct hash<CVMType>
+{
+  size_t operator()(const CVMType &type) const { return hash<string>()(type.GetName()); }
+};
+} // namespace std

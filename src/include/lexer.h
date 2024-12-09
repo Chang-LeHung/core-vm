@@ -9,11 +9,12 @@
 
 enum class SymbolType
 {
-  kString = 0,
-  kInt = 1,
-  kDouble = 2,
-  kLParentheses = 3,
-  kRParentheses = 4,
+  kString,
+  kInt,
+  kDouble,
+  kFloat,
+  kLParentheses,
+  kRParentheses,
   kRBrace,
   kLBrace,
   kChar,
@@ -22,6 +23,7 @@ enum class SymbolType
   kDiv,
   kMinus,
   kEq,
+  kSemicolon,
 };
 
 class CoreVMADT : public Seriable
@@ -53,6 +55,8 @@ public:
 
   int GetIntADT() const;
 
+  long GetLongADT() const;
+
   float GetFloatADT() const;
 
   double GetDoubleADT() const;
@@ -67,7 +71,19 @@ public:
 
   void Serialize(std::ostream &os);
 
-  ~CoreVMADT();
+  inline bool IsString() const { return _tag == SymbolType::kString; }
+
+  inline bool IsInt() const { return _tag == SymbolType::kInt; }
+
+  inline bool IsDouble() const { return _tag == SymbolType::kDouble; }
+
+  inline bool IsFloat() const { return _tag == SymbolType::kFloat; }
+
+  inline bool IsSemicolon() const { return _tag == SymbolType::kSemicolon; }
+
+  inline bool IsEq() const { return _tag == SymbolType::kEq; }
+
+  virtual ~CoreVMADT();
 };
 
 class CoreVMLexer : public Seriable
