@@ -1,7 +1,7 @@
 BasedOnStyle: LLVM
 IndentWidth: 2 
 UseTab: Never
-ColumnLimit: 120
+ColumnLimit: 80 
 BreakBeforeBraces: Allman
 AllowShortFunctionsOnASingleLine: InlineOnly
 # TemplateArgumentsPrecedence: Before 
