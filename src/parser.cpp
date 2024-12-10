@@ -15,8 +15,6 @@
 #include <unordered_map>
 #include <utility>
 
-std::unordered_map<std::string, CVMType> CVMType::_type_set = {};
-
 CVMType CVMType::GetOrCreateType(const std::string &name)
 {
   auto it = _type_set.find(name);
