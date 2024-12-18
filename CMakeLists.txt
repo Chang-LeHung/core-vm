@@ -22,6 +22,7 @@ set(SOURCE_FILES
     src/ir.cpp
     src/assembler.cpp
     src/types.cpp
+    src/bytecodeinterpreter.cpp
 )
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
