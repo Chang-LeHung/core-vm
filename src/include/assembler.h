@@ -106,4 +106,4 @@ public:
   inline const char *GetCode() const { return _code; }
 
   inline int GetPos() const { return _pos; }
-};
+}; 

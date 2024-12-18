@@ -137,6 +137,8 @@ public:
 
   void AddIR(const IR &ir) { _irs.emplace_back(std::make_shared<IR>(ir)); }
 
+  void AddSharedIR(const std::shared_ptr<IR> &ir) { _irs.emplace_back(ir); }
+
   std::shared_ptr<IR> &GetByIndex(int index) { return _irs[index]; }
 
   void emit(CVMAssembler &assembler) const override;
@@ -188,4 +190,22 @@ public:
   virtual void emit(CVMAssembler &assembler) const override;
 
   virtual ~NopIR() = default;
+};
+
+class CastIR : public IR
+{
+private:
+  std::shared_ptr<IR> _ir;
+
+public:
+  CastIR(OpCode code, CVMType type, std::shared_ptr<IR> hodler)
+      : IR(code, type), _ir(hodler)
+  {
+  }
+
+  CVMType GetHolderType() const { return _ir->GetResType(); }
+
+  virtual void emit(CVMAssembler &assembler) const override;
+
+  virtual ~CastIR() = default;
 };

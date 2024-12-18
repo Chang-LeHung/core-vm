@@ -2,6 +2,7 @@
 
 #include "ir.h"
 #include "assembler.h"
+#include "opcode.h"
 #include "types.h"
 #include "util.h"
 #include <cassert>
@@ -38,9 +39,6 @@ void BinaryIR::emit(CVMAssembler &assembler) const
     break;
   case OpCode::kDDiv:
     assembler.WriteStream(static_cast<u2>(OpCode::kDDiv));
-    break;
-  case OpCode::kDMod:
-    assembler.WriteStream(static_cast<u2>(OpCode::kDMod));
     break;
   case OpCode::kFAdd:
     assembler.WriteStream(static_cast<u2>(OpCode::kFAdd));
@@ -135,4 +133,34 @@ void DefinitionIR::emit(CVMAssembler &assembler) const
 
 void NopIR::emit(CVMAssembler &assembler) const
 {
+}
+
+void CastIR::emit(CVMAssembler &assembler) const
+{
+  _ir->emit(assembler);
+  switch (GetOpCode())
+  {
+  case OpCode::kICastD:
+    assembler.WriteStream(static_cast<u2>(OpCode::kICastD));
+    break;
+  case OpCode::kICastF:
+    assembler.WriteStream(static_cast<u2>(OpCode::kICastF));
+    break;
+  case OpCode::kICastL:
+    assembler.WriteStream(static_cast<u2>(OpCode::kICastL));
+    break;
+  case OpCode::kLCastD:
+    assembler.WriteStream(static_cast<u2>(OpCode::kLCastD));
+    break;
+  case OpCode::kLCastF:
+    assembler.WriteStream(static_cast<u2>(OpCode::kLCastF));
+    break;
+  case OpCode::kLCastI:
+    assembler.WriteStream(static_cast<u2>(OpCode::kLCastI));
+    break;
+  case OpCode::kNop: // same type
+    break;
+  default:
+    panic("unknown or unimplemented cast op", __FILE__, __LINE__);
+  }
 }

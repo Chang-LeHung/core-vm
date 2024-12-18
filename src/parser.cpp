@@ -77,7 +77,7 @@ std::shared_ptr<IR> Parser::Program()
   while (_pos < _tokens.size())
   {
     auto ir = Statement();
-    // program.AddIR(std::move(ir));
+    program->AddSharedIR(ir);
   }
   return program;
 }
@@ -229,11 +229,25 @@ std::shared_ptr<IR> Parser::Primary()
   }
   case SymbolType::kLParentheses:
   {
-    auto res = Expression();
-    auto token = Next();
-    if (token.GetTag() != SymbolType::kRParentheses)
-      panic("require )", __FILE__, __LINE__);
-    return res;
+    auto pos = GetPos();
+    const auto token = Next();
+    if (IsType(token) && HashNext() && Next().IsRParentheses())
+    {
+      Next(); // eat rparentheses
+      auto type = CVMType::GetOrCreateType(token.GetCharPtrADT());
+      const auto &ir = Primary();
+      return std::make_shared<CastIR>(GetCastCode(ir->GetResType(), type), type,
+                                      ir);
+    }
+    else
+    {
+      SetPos(pos);
+      auto res = Expression();
+      auto token = Next();
+      if (token.IsRParentheses())
+        panic("require )", __FILE__, __LINE__);
+      return res;
+    }
   }
   default:
     panic("Primary require a number or string", __FILE__, __LINE__);
@@ -246,4 +260,52 @@ void CVMType::InitIntrinsicType()
   CVMType::GetOrCreateType("float");
   CVMType::GetOrCreateType("double");
   CVMType::GetOrCreateType("long");
+}
+
+bool Parser::IsType(const CoreVMADT &adt)
+{
+  return adt.IsString() && CVMType::ContainType(adt.GetCharPtrADT());
+}
+
+OpCode Parser::GetCastCode(const CVMType &from, const CVMType &to)
+{
+  if (from == to)
+    return OpCode::kNop;
+  if (from.IsInt())
+  {
+    if (to.IsLong())
+      return OpCode::kICastL;
+    if (to.IsFloat())
+      return OpCode::kICastF;
+    if (to.IsDouble())
+      return OpCode::kICastD;
+  }
+  else if (from.IsFloat())
+  {
+    if (to.IsInt())
+      return OpCode::kFCastI;
+    if (to.IsDouble())
+      return OpCode::kFCastD;
+    if (to.IsLong())
+      return OpCode::kFCastL;
+  }
+  else if (from.IsLong())
+  {
+    if (to.IsInt())
+      return OpCode::kLCastI;
+    if (to.IsFloat())
+      return OpCode::kLCastF;
+    if (to.IsDouble())
+      return OpCode::kLCastD;
+  }
+  else if (from.IsDouble())
+  {
+    if (to.IsInt())
+      return OpCode::kDCastI;
+    if (to.IsFloat())
+      return OpCode::kDCastF;
+    if (to.IsLong())
+      return OpCode::kDCastL;
+  }
+  panic("unsupported cast", __FILE__, __LINE__);
 }

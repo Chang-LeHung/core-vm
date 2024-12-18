@@ -3,6 +3,8 @@
 
 #include "ir.h"
 #include "lexer.h"
+#include "opcode.h"
+#include "types.h"
 #include <fcntl.h>
 #include <memory>
 #include <string>
@@ -17,6 +19,10 @@ private:
   std::vector<CoreVMADT> _tokens;
   std::unordered_map<std::string, std::pair<int, CVMType>> _symbol_table;
   int _pos;
+
+  static bool IsType(const CoreVMADT &adt);
+
+  static OpCode GetCastCode(const CVMType &from, const CVMType &to);
 
 public:
   Parser(const std::vector<CoreVMADT> &tokens) : _tokens(tokens), _pos(0)
@@ -56,4 +62,17 @@ private:
     }
     return _tokens[_pos];
   }
+
+  const CoreVMADT &Prve(bool backward = true)
+  {
+    if (backward)
+    {
+      return _tokens[_pos--];
+    }
+    return _tokens[_pos];
+  }
+
+  inline int GetPos() { return _pos; }
+
+  inline void SetPos(int pos) { _pos = pos; }
 };

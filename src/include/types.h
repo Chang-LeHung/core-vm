@@ -28,6 +28,14 @@ public:
 
   bool operator!=(const CVMType &other) const { return _name != other._name; }
 
+  bool IsInt() const { return _name == "int"; }
+
+  bool IsFloat() const { return _name == "float"; }
+
+  bool IsDouble() const { return _name == "double"; }
+
+  bool IsLong() const { return _name == "long"; }
+
   CVMType(std::string name) : _name(name) {}
 
   CVMType(const CVMType &type) { _name = type._name; }
@@ -46,6 +54,9 @@ namespace std
 {
 template <> struct hash<CVMType>
 {
-  size_t operator()(const CVMType &type) const { return hash<string>()(type.GetName()); }
+  size_t operator()(const CVMType &type) const
+  {
+    return hash<string>()(type.GetName());
+  }
 };
 } // namespace std

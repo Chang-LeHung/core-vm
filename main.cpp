@@ -1,8 +1,6 @@
 
 #include "parser.h"
 #include <cstdio>
-#include <iostream>
-#include <ostream>
 
 int main()
 {
