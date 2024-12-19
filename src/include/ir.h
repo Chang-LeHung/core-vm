@@ -18,6 +18,7 @@ private:
   CVMType _res_type;
 
 public:
+  static int _ljust;
   IR(OpCode opcode, CVMType type) : _opcode(opcode), _res_type(type) {}
 
   IR(const IR &ir) : _res_type(ir._res_type)
@@ -32,7 +33,7 @@ public:
 
   inline const char *GetName() { return _res_type.GetName().c_str(); }
 
-  virtual void emit(CVMAssembler &assembler) const {};
+  virtual void Emit(CVMAssembler &assembler) const {};
 
   virtual CVMType GetResType() const { return _res_type; }
 
@@ -57,6 +58,8 @@ public:
   }
 
   virtual ~IR() = default;
+
+  virtual void Dump(std::ostream &os) const {}
 };
 
 class BinaryIR : public IR
@@ -65,7 +68,6 @@ class BinaryIR : public IR
 private:
   std::shared_ptr<IR> _lhs;
   std::shared_ptr<IR> _rhs;
-  OpCode _op;
 
 public:
   BinaryIR(OpCode opcode, std::shared_ptr<IR> lhs, std::shared_ptr<IR> rhs)
@@ -73,7 +75,9 @@ public:
   {
   }
 
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class VariableIR : public IR
@@ -90,9 +94,11 @@ public:
 
   inline const std::string &GetName() const { return _name; }
 
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
 
   inline int GetIx() const { return _ix; }
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class Constant : public IR
@@ -108,7 +114,9 @@ public:
 
   inline CoreVMADT GetVal() const { return _val; }
 
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class StoreIR : public VariableIR
@@ -119,7 +127,9 @@ public:
   {
   }
 
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class ProgramIR : public IR
@@ -141,8 +151,10 @@ public:
 
   std::shared_ptr<IR> &GetByIndex(int index) { return _irs[index]; }
 
-  void emit(CVMAssembler &assembler) const override;
+  void Emit(CVMAssembler &assembler) const override;
   virtual ~ProgramIR() = default;
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class AssignStmtIR : public IR
@@ -158,9 +170,11 @@ public:
   {
   }
 
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
 
   virtual ~AssignStmtIR() = default;
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class DefinitionIR : public IR
@@ -175,21 +189,24 @@ public:
   {
   }
 
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
 
   std::string GetVarName() const { return _var_name; }
 
   virtual ~DefinitionIR() = default;
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class NopIR : public IR
 {
 public:
   NopIR() : IR(OpCode::kNop, void_op) {}
-
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
 
   virtual ~NopIR() = default;
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class CastIR : public IR
@@ -205,9 +222,11 @@ public:
 
   CVMType GetHolderType() const { return _ir->GetResType(); }
 
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
 
   virtual ~CastIR() = default;
+
+  virtual void Dump(std::ostream &os) const override;
 };
 
 class FunctionCallIR : public IR
@@ -223,7 +242,9 @@ public:
   {
   }
 
-  virtual void emit(CVMAssembler &assembler) const override;
+  virtual void Emit(CVMAssembler &assembler) const override;
 
   virtual ~FunctionCallIR() = default;
+
+  virtual void Dump(std::ostream &os) const override;
 };

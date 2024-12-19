@@ -232,13 +232,12 @@ const std::vector<CoreVMADT> &CoreVMLexer::DoParse()
         c = _is.Next();
       }
       int end_pos = _is.Current();
-      int size = end_pos - begin_pos + 1;
+      int size = end_pos - begin_pos;
       char *str = new char[size];
       MEMCPY(str, _is, begin_pos, end_pos);
       str[size - 1] = '\0';
       _tokens.emplace_back((u8 *)str, SymbolType::kString);
-      if (_is.HasNext())
-        _is.Back();
+      _is.Back();
     }
     else if (c == '[')
     {

@@ -44,8 +44,9 @@ public:
 
   static CVMType GetOrCreateType(const std::string &name);
 
-  static inline bool ContainType(const std::string &name);
-  static inline bool ContainType(const CVMType &type);
+  [[maybe_unused]] static bool ContainType(const std::string &name);
+
+  static bool ContainType(const CVMType &type);
 };
 
 extern CVMType void_op;

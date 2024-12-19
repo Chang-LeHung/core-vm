@@ -46,7 +46,7 @@ CVMType CVMType::GetOrCreateType(const std::string &name)
   }
 }
 
-bool CVMType::ContainType(const std::string &name)
+[[maybe_unused]] bool CVMType::ContainType(const std::string &name)
 {
   return _type_set.find(name) != _type_set.end();
 }
@@ -175,9 +175,10 @@ std::shared_ptr<IR> Parser::Statement()
         {
           args.emplace_back(Expression());
           ENSURE_HAS_NEXT;
-          if (!Next().IsComma())
-            panic("expected a comma", __FILE__, __LINE__);
+          if (Next(false).IsComma())
+            Next();
         }
+        Next(); // eat rparentheses
         // only print is legal in CVM, whose return type is void
         return std::make_shared<FunctionCallIR>(
             name, args, CVMType::GetOrCreateType("void"));

@@ -6,58 +6,23 @@
 #include "types.h"
 #include "util.h"
 #include <cassert>
+#include <iomanip>
+#include <linux/limits.h>
+#include <ostream>
 
-void BinaryIR::emit(CVMAssembler &assembler) const
+int IR::_ljust = 10;
+
+#define VAR_NAME_W 3
+#define LJUST(n) std::left << std::setw(n)
+
+void BinaryIR::Emit(CVMAssembler &assembler) const
 {
-  _rhs->emit(assembler);
-  _lhs->emit(assembler);
-  switch (_op)
-  {
-  case OpCode::kIAdd:
-    assembler.WriteStream(static_cast<u2>(OpCode::kIAdd));
-    break;
-  case OpCode::kISub:
-    assembler.WriteStream(static_cast<u2>(OpCode::kISub));
-    break;
-  case OpCode::kIMul:
-    assembler.WriteStream(static_cast<u2>(OpCode::kIMul));
-    break;
-  case OpCode::kIDiv:
-    assembler.WriteStream(static_cast<u2>(OpCode::kIDiv));
-    break;
-  case OpCode::kIMod:
-    assembler.WriteStream(static_cast<u2>(OpCode::kIMod));
-    break;
-  case OpCode::kDAdd:
-    assembler.WriteStream(static_cast<u2>(OpCode::kDAdd));
-    break;
-  case OpCode::kDSub:
-    assembler.WriteStream(static_cast<u2>(OpCode::kDSub));
-    break;
-  case OpCode::kDMul:
-    assembler.WriteStream(static_cast<u2>(OpCode::kDMul));
-    break;
-  case OpCode::kDDiv:
-    assembler.WriteStream(static_cast<u2>(OpCode::kDDiv));
-    break;
-  case OpCode::kFAdd:
-    assembler.WriteStream(static_cast<u2>(OpCode::kFAdd));
-    break;
-  case OpCode::kFSub:
-    assembler.WriteStream(static_cast<u2>(OpCode::kFSub));
-    break;
-  case OpCode::kFMul:
-    assembler.WriteStream(static_cast<u2>(OpCode::kFMul));
-    break;
-  case OpCode::kFDiv:
-    assembler.WriteStream(static_cast<u2>(OpCode::kFDiv));
-    break;
-  default:
-    panic("unknown or unimplemented binary op", __FILE__, __LINE__);
-  }
+  _rhs->Emit(assembler);
+  _lhs->Emit(assembler);
+  assembler.WriteStream(static_cast<u2>(GetOpCode()));
 }
 
-void VariableIR::emit(CVMAssembler &assembler) const
+void VariableIR::Emit(CVMAssembler &assembler) const
 {
   if (IsIntRes())
     assembler.WriteStream(static_cast<u2>(OpCode::kLoadI));
@@ -72,7 +37,7 @@ void VariableIR::emit(CVMAssembler &assembler) const
   assembler.WriteStream(static_cast<u2>(_ix));
 }
 
-void Constant::emit(CVMAssembler &assembler) const
+void Constant::Emit(CVMAssembler &assembler) const
 {
   switch (_op)
   {
@@ -97,7 +62,7 @@ void Constant::emit(CVMAssembler &assembler) const
   }
 }
 
-void StoreIR::emit(CVMAssembler &assembler) const
+void StoreIR::Emit(CVMAssembler &assembler) const
 {
   if (IsIntRes())
     assembler.WriteStream(static_cast<u2>(OpCode::kStoreI));
@@ -112,32 +77,32 @@ void StoreIR::emit(CVMAssembler &assembler) const
   assembler.WriteStream(static_cast<u2>(GetIx()));
 }
 
-void ProgramIR::emit(CVMAssembler &assembler) const
+void ProgramIR::Emit(CVMAssembler &assembler) const
 {
   for (const auto &ir : _irs)
   {
-    ir->emit(assembler);
+    ir->Emit(assembler);
   }
 }
 
-void AssignStmtIR::emit(CVMAssembler &assembler) const
+void AssignStmtIR::Emit(CVMAssembler &assembler) const
 {
   // post order traversal
-  _rhs->emit(assembler);
-  _lhs->emit(assembler);
+  _rhs->Emit(assembler);
+  _lhs->Emit(assembler);
 }
 
-void DefinitionIR::emit(CVMAssembler &assembler) const
+void DefinitionIR::Emit(CVMAssembler &assembler) const
 {
 }
 
-void NopIR::emit(CVMAssembler &assembler) const
+void NopIR::Emit(CVMAssembler &assembler) const
 {
 }
 
-void CastIR::emit(CVMAssembler &assembler) const
+void CastIR::Emit(CVMAssembler &assembler) const
 {
-  _ir->emit(assembler);
+  _ir->Emit(assembler);
   switch (GetOpCode())
   {
   case OpCode::kICastD:
@@ -165,6 +130,262 @@ void CastIR::emit(CVMAssembler &assembler) const
   }
 }
 
-void FunctionCallIR::emit(CVMAssembler &assembler) const
+void FunctionCallIR::Emit(CVMAssembler &assembler) const
 {
+  if (_func_name != "print")
+  {
+    panic("only print can be used in cvm", __FILE__, __LINE__);
+  }
+  if (_args.size() != 1)
+  {
+    panic("print only support one argument", __FILE__, __LINE__);
+  }
+  _args[0]->Emit(assembler);
+  const auto &arg0 = _args[0];
+  if (arg0->IsDoubleRes())
+  {
+    assembler.WriteStream(static_cast<u2>(OpCode::kPrintD));
+  }
+  else if (arg0->IsFloatRes())
+  {
+    assembler.WriteStream(static_cast<u2>(OpCode::kPrintF));
+  }
+  else if (arg0->IsIntRes())
+  {
+    assembler.WriteStream(static_cast<u2>(OpCode::kPrintI));
+  }
+  else if (arg0->IsLongRes())
+  {
+    assembler.WriteStream(static_cast<u2>(OpCode::kPrintL));
+  }
+  assembler.WriteStream(static_cast<u2>(_args.size()));
+}
+
+void BinaryIR::Dump(std::ostream &os) const
+{
+  _lhs->Dump(os);
+  os << "\n";
+  _rhs->Dump(os);
+  os << "\n";
+  switch (GetOpCode())
+  {
+  case OpCode::kIAdd:
+    os << "IAdd";
+    break;
+  case OpCode::kISub:
+    os << "ISub";
+    break;
+  case OpCode::kIMul:
+    os << "IMul";
+    break;
+  case OpCode::kIDiv:
+    os << "IDiv";
+    break;
+  case OpCode::kIMod:
+    os << "IMod";
+    break;
+  case OpCode::kDAdd:
+    os << "DAdd";
+    break;
+  case OpCode::kDSub:
+    os << "DSub";
+    break;
+  case OpCode::kDMul:
+    os << "DMul";
+    break;
+  case OpCode::kDDiv:
+    os << "DDiv";
+    break;
+  case OpCode::kFAdd:
+    os << "FAdd";
+    break;
+  case OpCode::kLAdd:
+    os << "LAdd";
+    break;
+  case OpCode::kLSub:
+    os << "LSub";
+    break;
+  case OpCode::kLMul:
+    os << "LMul";
+    break;
+  case OpCode::kLDiv:
+    os << "LDiv";
+    break;
+  case OpCode::kLMod:
+    os << "LMod";
+    break;
+  default:
+    panic("unknown or unimplemented binary op", __FILE__, __LINE__);
+  }
+}
+
+void VariableIR::Dump(std::ostream &os) const
+{
+  switch (GetOpCode())
+  {
+  case OpCode::kLoadI:
+    os << LJUST(IR::_ljust) << "LoadI" << LJUST(VAR_NAME_W) << GetIx() << "("
+       << GetName() << ")";
+    break;
+  case OpCode::kLoadF:
+    os << LJUST(IR::_ljust) << "LoadF" << LJUST(VAR_NAME_W) << GetIx() << "("
+       << GetName() << ")";
+    break;
+  case OpCode::kLoadD:
+    os << LJUST(IR::_ljust) << "LoadD" << LJUST(VAR_NAME_W) << GetIx() << "("
+       << GetName() << ")";
+    break;
+  case OpCode::kLoadL:
+    os << LJUST(IR::_ljust) << "LoadL" << LJUST(VAR_NAME_W) << GetIx() << "("
+       << GetName() << ")";
+    break;
+  default:
+    panic("unknown or unimplemented load op", __FILE__, __LINE__);
+  }
+}
+
+void Constant::Dump(std::ostream &os) const
+{
+  switch (GetOpCode())
+  {
+  case OpCode::kIConst:
+    os << LJUST(IR::_ljust) << "IConst" << _val.GetIntADT();
+    break;
+  case OpCode::kFConst:
+    os << LJUST(IR::_ljust) << "FConst" << _val.GetFloatADT();
+    break;
+  case OpCode::kDConst:
+    os << LJUST(IR::_ljust) << "DConst" << _val.GetDoubleADT();
+    break;
+  case OpCode::kLConst:
+    os << LJUST(IR::_ljust) << "LConst" << _val.GetLongADT();
+    break;
+  default:
+    panic("unknown or unimplemented type", __FILE__, __LINE__);
+  }
+}
+
+void StoreIR::Dump(std::ostream &os) const
+{
+  switch (GetOpCode())
+  {
+  case OpCode::kStoreI:
+    os << LJUST(IR::_ljust) << "StoreI" << LJUST(VAR_NAME_W) << GetIx() << "("
+       << GetName() << ")";
+    break;
+  case OpCode::kStoreF:
+    os << LJUST(IR::_ljust) << "StoreF" << LJUST(VAR_NAME_W) << GetIx() << "("
+       << GetName() << ")";
+    break;
+  case OpCode::kStoreD:
+    os << LJUST(IR::_ljust) << "StoreD" << LJUST(VAR_NAME_W) << GetIx() << "("
+       << GetName() << ")";
+    break;
+  case OpCode::kStoreL:
+    os << LJUST(IR::_ljust) << "StoreL" << LJUST(VAR_NAME_W) << GetIx() << "("
+       << GetName() << ")";
+    break;
+  default:
+    panic("unknown or unimplemented store op", __FILE__, __LINE__);
+  }
+}
+
+void ProgramIR::Dump(std::ostream &os) const
+{
+  os << LJUST(IR::_ljust) << "OpName" << LJUST(VAR_NAME_W)
+     << "OpArg(VarName)\n";
+  for (const auto &ir : _irs)
+  {
+    ir->Dump(os);
+    os << "\n";
+  }
+}
+
+void AssignStmtIR::Dump(std::ostream &os) const
+{
+  _rhs->Dump(os);
+  os << "\n";
+  _lhs->Dump(os);
+}
+
+void DefinitionIR::Dump(std::ostream &os) const
+{
+}
+
+void NopIR::Dump(std::ostream &os) const
+{
+}
+
+void CastIR::Dump(std::ostream &os) const
+{
+  _ir->Dump(os);
+  switch (GetOpCode())
+  {
+  case OpCode::kICastD:
+    os << "ICastD";
+    break;
+  case OpCode::kICastF:
+    os << "ICastF";
+    break;
+  case OpCode::kICastL:
+    os << "ICastL";
+    break;
+  case OpCode::kLCastD:
+    os << "LCastD";
+    break;
+  case OpCode::kLCastF:
+    os << "LCastF";
+    break;
+  case OpCode::kLCastI:
+    os << "LCastI";
+    break;
+  case OpCode::kFCastD:
+    os << "FCastD";
+    break;
+  case OpCode::kFCastI:
+    os << "FCastI";
+    break;
+  case OpCode::kFCastL:
+    os << "FCastL";
+    break;
+  case OpCode::kDCastI:
+    os << "DCastI";
+    break;
+  case OpCode::kDCastL:
+    os << "DCastL";
+    break;
+  case OpCode::kDCastF:
+    os << "DCastF";
+    break;
+  default:
+    panic("unknown or unimplemented cast op", __FILE__, __LINE__);
+  }
+}
+
+void FunctionCallIR::Dump(std::ostream &os) const
+{
+  const auto &arg0 = _args[0];
+  arg0->Dump(os);
+  os << "\n";
+  assert(_func_name == "print");
+  if (arg0->IsDoubleRes())
+  {
+    os << "PrintD";
+  }
+  else if (arg0->IsFloatRes())
+  {
+    os << "PrintF";
+  }
+  else if (arg0->IsIntRes())
+  {
+    os << "PrintI";
+  }
+  else if (arg0->IsLongRes())
+  {
+    os << "PrintL";
+  }
+  else
+  {
+    panic("unknown or unimplemented print type", __FILE__, __LINE__);
+  }
 }

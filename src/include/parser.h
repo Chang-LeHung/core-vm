@@ -16,7 +16,7 @@ class Parser
 {
 
 private:
-  std::vector<CoreVMADT> _tokens;
+  const std::vector<CoreVMADT> &_tokens;
   std::unordered_map<std::string, std::pair<int, CVMType>> _symbol_table;
   int _pos;
 
