@@ -31,3 +31,6 @@ include_directories(src/include)
 add_executable(core-vm main.cpp ${SOURCE_FILES})
 
 add_executable(test_lexer test/test_lexer.cpp ${SOURCE_FILES})
+
+enable_testing()
+add_test(NAME test_lexer COMMAND test_lexer ../test/test_lexer.cvm)

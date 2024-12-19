@@ -41,6 +41,8 @@ public:
 
   inline char Next() { return _cur < _size ? _buffer[_cur++] : '\0'; }
 
+  inline char CurrentChar() { return _cur < _size ? _buffer[_cur] : '\0'; }
+
   inline bool HasNext() { return _cur < _size; }
 
   inline void Back() { --_cur; }

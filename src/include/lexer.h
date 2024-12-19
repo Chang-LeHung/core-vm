@@ -10,6 +10,7 @@
 enum class SymbolType
 {
   kString,
+  kStringVar,
   kInt,
   kLong,
   kDouble,
@@ -24,6 +25,9 @@ enum class SymbolType
   kDiv,
   kMinus,
   kEq,
+  kComma,
+  kLQuote,
+  kRQuote,
   kSemicolon,
 };
 
@@ -94,6 +98,8 @@ public:
   {
     return _tag == SymbolType::kLParentheses;
   }
+
+  inline bool IsComma() const { return _tag == SymbolType::kComma; }
 
   inline bool IsRParentheses() const
   {

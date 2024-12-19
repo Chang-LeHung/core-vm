@@ -164,3 +164,7 @@ void CastIR::emit(CVMAssembler &assembler) const
     panic("unknown or unimplemented cast op", __FILE__, __LINE__);
   }
 }
+
+void FunctionCallIR::emit(CVMAssembler &assembler) const
+{
+}

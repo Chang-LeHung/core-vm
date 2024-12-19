@@ -9,11 +9,27 @@
 #include <cassert>
 #include <cstdio>
 #include <fcntl.h>
-#include <linux/limits.h>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
+
+#define ENSURE_HAS_NEXT                                                        \
+  do                                                                           \
+  {                                                                            \
+    if (!HashNext())                                                           \
+      panic("no next token", __FILE__, __LINE__);                              \
+  } while (0)
+
+#define ENSURE_SYM_EXIST(sym)                                                  \
+  do                                                                           \
+  {                                                                            \
+    if (_symbol_table.find(sym) == _symbol_table.end())                        \
+      panic("sym is not found", __FILE__, __LINE__);                           \
+    if (CVMType::ContainType(sym))                                             \
+      panic("sym conflicts with builtin types", __FILE__, __LINE__);           \
+  } while (0)
 
 CVMType CVMType::GetOrCreateType(const std::string &name)
 {
@@ -143,8 +159,28 @@ std::shared_ptr<IR> Parser::Statement()
     {
       if (HashNext() && Next(false).IsEq())
       {
+        // assign statement
         Next(); // eat assign
-        // return ExtraceAssignIR(name, nxt_s, loc);
+        ENSURE_SYM_EXIST(name);
+        auto t = _symbol_table.find(name);
+        return ExtraceAssignIR(t->second.second.GetName(), name,
+                               t->second.first);
+      }
+      else if (HashNext() && Next(false).IsLParentheses())
+      {
+        // funciton call
+        Next();
+        std::vector<std::shared_ptr<IR>> args;
+        while (HashNext() && !Next(false).IsRParentheses())
+        {
+          args.emplace_back(Expression());
+          ENSURE_HAS_NEXT;
+          if (!Next().IsComma())
+            panic("expected a comma", __FILE__, __LINE__);
+        }
+        // only print is legal in CVM, whose return type is void
+        return std::make_shared<FunctionCallIR>(
+            name, args, CVMType::GetOrCreateType("void"));
       }
       panic("expected a eq", __FILE__, __LINE__);
     }
@@ -260,6 +296,7 @@ void CVMType::InitIntrinsicType()
   CVMType::GetOrCreateType("float");
   CVMType::GetOrCreateType("double");
   CVMType::GetOrCreateType("long");
+  CVMType::GetOrCreateType("void");
 }
 
 bool Parser::IsType(const CoreVMADT &adt)

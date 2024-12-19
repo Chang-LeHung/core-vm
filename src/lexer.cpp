@@ -147,6 +147,14 @@ void CoreVMADT::Serialize(std::ostream &os)
   case SymbolType::kSemicolon:
     os << ';';
     break;
+  case SymbolType::kComma:
+    os << ',';
+  case SymbolType::kLQuote:
+    os << '\"';
+    break;
+  case SymbolType::kRQuote:
+    os << '\"';
+    break;
   default:
     panic("Invalid symbol type", __FILE__, __LINE__);
   }
@@ -274,6 +282,27 @@ const std::vector<CoreVMADT> &CoreVMLexer::DoParse()
     else if (c == ';')
     {
       _tokens.emplace_back(';', SymbolType::kSemicolon);
+    }
+    else if (c == ',')
+    {
+      _tokens.emplace_back(',', SymbolType::kComma);
+    }
+    else if (c == '\"')
+    {
+      int begin_pos = _is.Current();
+      while (_is.HasNext() && _is.Next() != '\"')
+        ;
+      _is.Skip(-1);
+      if (_is.CurrentChar() != '\"')
+        panic("Invalid string literal", __FILE__, __LINE__);
+      _is.Skip();
+      // create a new heap buf and copy in it
+      int end_pos = _is.Current();
+      char *str = new char[end_pos - begin_pos + 1];
+      MEMCPY(str, _is, begin_pos, end_pos);
+      str[end_pos - begin_pos] = '\0';
+      // pass the ownship of str to CoreVMADT
+      _tokens.emplace_back((u8 *)str, SymbolType::kStringVar);
     }
     else
     {

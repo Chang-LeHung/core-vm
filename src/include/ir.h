@@ -209,3 +209,21 @@ public:
 
   virtual ~CastIR() = default;
 };
+
+class FunctionCallIR : public IR
+{
+private:
+  std::string _func_name;
+  std::vector<std::shared_ptr<IR>> _args;
+
+public:
+  FunctionCallIR(std::string name, std::vector<std::shared_ptr<IR>> args,
+                 CVMType type)
+      : IR(OpCode::kNop, type), _func_name(name), _args(args)
+  {
+  }
+
+  virtual void emit(CVMAssembler &assembler) const override;
+
+  virtual ~FunctionCallIR() = default;
+};
