@@ -32,5 +32,25 @@ int main(int argc, char **argv)
   std::ostringstream byte_code;
   ir->Dump(byte_code);
   std::cout << byte_code.str() << std::endl;
+  auto code = byte_code.str();
+
+  assert(code.find("LoadI     0  (a)") != std::string::npos);
+  assert(code.find("LoadI     1  (b)") != std::string::npos);
+  assert(code.find("IAdd") != std::string::npos);
+  assert(code.find("StoreI    3  (d)") != std::string::npos);
+  assert(code.find("") != std::string::npos);
+  assert(code.find("LoadI     3  (d)") != std::string::npos);
+  assert(code.find("PrintI") != std::string::npos);
+  assert(code.find("IConst    1") != std::string::npos);
+  assert(code.find("IConst    2") != std::string::npos);
+  assert(code.find("IMul") != std::string::npos);
+  assert(code.find("IConst    3") != std::string::npos);
+  assert(code.find("IConst    4") != std::string::npos);
+  assert(code.find("IMul") != std::string::npos);
+  assert(code.find("IAdd") != std::string::npos);
+  assert(code.find("StoreI    4  (ff)") != std::string::npos);
+  assert(code.find("") != std::string::npos);
+  assert(code.find("LoadI     4  (ff)") != std::string::npos);
+  assert(code.find("PrintI") != std::string::npos);
   return 0;
 }

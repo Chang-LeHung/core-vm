@@ -36,5 +36,4 @@ add_executable(test_parser test/test_parser.cpp ${SOURCE_FILES})
 
 enable_testing()
 add_test(NAME test_lexer COMMAND test_lexer ../test/test_lexer.cvm)
-add_test(NAME test_parser_v1 COMMAND test_parser ../test/test_lexer.cvm)
-add_test(NAME test_parser_v2 COMMAND test_parser ../test/test_parser.cvm)
+add_test(NAME test_parser COMMAND test_parser ../test/test_parser.cvm)
