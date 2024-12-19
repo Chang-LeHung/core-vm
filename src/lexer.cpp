@@ -149,6 +149,7 @@ void CoreVMADT::Serialize(std::ostream &os)
     break;
   case SymbolType::kComma:
     os << ',';
+    break;
   case SymbolType::kLQuote:
     os << '\"';
     break;
