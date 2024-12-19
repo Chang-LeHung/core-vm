@@ -1,0 +1,12 @@
+
+
+
+
+int a = 1;
+int b = 1;
+double c = 213.123;
+int d = a + b;
+print(d)
+
+int ff = 1*2+3*4;
+print(ff)

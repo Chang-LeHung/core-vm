@@ -24,6 +24,7 @@ set(SOURCE_FILES
     src/types.cpp
     src/bytecodeinterpreter.cpp
 )
+
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
 include_directories(src/include)
@@ -31,6 +32,9 @@ include_directories(src/include)
 add_executable(core-vm main.cpp ${SOURCE_FILES})
 
 add_executable(test_lexer test/test_lexer.cpp ${SOURCE_FILES})
+add_executable(test_parser test/test_parser.cpp ${SOURCE_FILES})
 
 enable_testing()
 add_test(NAME test_lexer COMMAND test_lexer ../test/test_lexer.cvm)
+add_test(NAME test_parser_v1 COMMAND test_parser ../test/test_lexer.cvm)
+add_test(NAME test_parser_v2 COMMAND test_parser ../test/test_parser.cvm)
