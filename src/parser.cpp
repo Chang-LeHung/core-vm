@@ -99,7 +99,7 @@ std::shared_ptr<IR> Parser::Program()
 }
 
 std::shared_ptr<AssignStmtIR>
-Parser::ExtraceAssignIR(const std::string &type_name, const std::string &symbol,
+Parser::ExtractAssignIR(const std::string &type_name, const std::string &symbol,
                         int loc)
 {
   auto expr = Expression();
@@ -143,7 +143,7 @@ std::shared_ptr<IR> Parser::Statement()
         else if (Next(false).IsEq())
         {
           Next(); // eat equal
-          return ExtraceAssignIR(name, nxt_s, loc);
+          return ExtractAssignIR(name, nxt_s, loc);
         }
         else
         {
@@ -163,7 +163,7 @@ std::shared_ptr<IR> Parser::Statement()
         Next(); // eat assign
         ENSURE_SYM_EXIST(name);
         auto t = _symbol_table.find(name);
-        return ExtraceAssignIR(t->second.second.GetName(), name,
+        return ExtractAssignIR(t->second.second.GetName(), name,
                                t->second.first);
       }
       else if (HashNext() && Next(false).IsLParentheses())
