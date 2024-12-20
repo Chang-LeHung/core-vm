@@ -390,3 +390,92 @@ void FunctionCallIR::Dump(std::ostream &os) const
     panic("unknown or unimplemented print type", __FILE__, __LINE__);
   }
 }
+
+void BinaryIR::Verify() const
+{
+  _lhs->Verify();
+  _rhs->Verify();
+  if (_lhs->GetResType() != _rhs->GetResType())
+    panic("binary op type mismatch", __FILE__, __LINE__);
+  switch (GetOpCode())
+  {
+  case OpCode::kIAdd:
+  case OpCode::kISub:
+  case OpCode::kIMul:
+  case OpCode::kIDiv:
+  case OpCode::kIMod:
+    if (_lhs->GetResType() != CVMType::GetOrCreateType("int"))
+      panic("binary op type mismatch(int is required)", __FILE__, __LINE__);
+    break;
+  case OpCode::kDAdd:
+  case OpCode::kDSub:
+  case OpCode::kDMul:
+  case OpCode::kDDiv:
+    if (_lhs->GetResType() != CVMType::GetOrCreateType("double"))
+      panic("binary op type mismatch(double is required)", __FILE__, __LINE__);
+    break;
+  case OpCode::kFAdd:
+  case OpCode::kFSub:
+  case OpCode::kFMul:
+  case OpCode::kFDiv:
+    if (_lhs->GetResType() != CVMType::GetOrCreateType("float"))
+      panic("binary op type mismatch(float is required)", __FILE__, __LINE__);
+  case OpCode::kLAdd:
+  case OpCode::kLSub:
+  case OpCode::kLMul:
+  case OpCode::kLDiv:
+  case OpCode::kLMod:
+    if (_lhs->GetResType() != CVMType::GetOrCreateType("long"))
+      panic("binary op type mismatch(long is required)", __FILE__, __LINE__);
+  default:
+    panic("unknown or unimplemented binary op", __FILE__, __LINE__);
+  }
+}
+
+void VariableIR::Verify() const
+{
+}
+
+void Constant::Verify() const
+{
+}
+
+void StoreIR::Verify() const
+{
+}
+
+void ProgramIR::Verify() const
+{
+  for (const auto &ir : _irs)
+  {
+    ir->Verify();
+  }
+}
+
+void AssignStmtIR::Verify() const
+{
+  _lhs->Verify();
+  _rhs->Verify();
+  if (_lhs->GetResType() != _rhs->GetResType())
+    panic("assign type mismatch", __FILE__, __LINE__);
+}
+
+void DefinitionIR::Verify() const
+{
+}
+
+void NopIR::Verify() const
+{
+}
+
+void CastIR::Verify() const
+{
+  _ir->Verify();
+}
+
+void FunctionCallIR::Verify() const
+{
+  if (_args.size() != 1)
+    panic("function call args size error", __FILE__, __LINE__);
+  _args[0]->Verify();
+}

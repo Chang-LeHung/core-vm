@@ -60,6 +60,8 @@ public:
   virtual ~IR() = default;
 
   virtual void Dump(std::ostream &os) const {}
+
+  virtual void Verify() const {}
 };
 
 class BinaryIR : public IR
@@ -78,6 +80,8 @@ public:
   virtual void Emit(CVMAssembler &assembler) const override;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class VariableIR : public IR
@@ -99,6 +103,8 @@ public:
   inline int GetIx() const { return _ix; }
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class Constant : public IR
@@ -117,6 +123,8 @@ public:
   virtual void Emit(CVMAssembler &assembler) const override;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class StoreIR : public VariableIR
@@ -130,6 +138,8 @@ public:
   virtual void Emit(CVMAssembler &assembler) const override;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class ProgramIR : public IR
@@ -155,6 +165,8 @@ public:
   virtual ~ProgramIR() = default;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class AssignStmtIR : public IR
@@ -175,6 +187,8 @@ public:
   virtual ~AssignStmtIR() = default;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class DefinitionIR : public IR
@@ -196,6 +210,8 @@ public:
   virtual ~DefinitionIR() = default;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class NopIR : public IR
@@ -207,6 +223,8 @@ public:
   virtual ~NopIR() = default;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class CastIR : public IR
@@ -227,6 +245,8 @@ public:
   virtual ~CastIR() = default;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
 
 class FunctionCallIR : public IR
@@ -247,4 +267,6 @@ public:
   virtual ~FunctionCallIR() = default;
 
   virtual void Dump(std::ostream &os) const override;
+
+  virtual void Verify() const override;
 };
