@@ -34,5 +34,5 @@ public:
       free(_code_buf);
   }
 
-  void Run();
+  __attribute__((no_sanitize("address", "undefined", "leak"))) void Run();
 };

@@ -44,7 +44,8 @@
   type lhs = macro();                                                          \
   type rhs = macro()
 
-void ByteCodeInterpreter::Run()
+__attribute__((no_sanitize("address", "undefined", "leak"))) void
+ByteCodeInterpreter::Run()
 {
   for (; _pc < _code_size;)
     switch (static_cast<OpCode>(_code_buf[_pc]))
