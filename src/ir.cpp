@@ -319,6 +319,7 @@ void NopIR::Dump(std::ostream &os) const
 void CastIR::Dump(std::ostream &os) const
 {
   _ir->Dump(os);
+  os << "\n";
   switch (GetOpCode())
   {
   case OpCode::kICastD:

@@ -37,12 +37,12 @@ private:
   union ADT
   {
     u1 cval;
-    u4 ival;  // int
-    u8 lval;  // long
-    f4 fval;  // float
-    f8 dval;  // double
-    u8 *sval; // string, if as sval, CorVMADT owns the string, need free the
-              // memory at constructor
+    u4 ival;    // int
+    u8 lval;    // long
+    f4 fval;    // float
+    f8 dval;    // double
+    char *sval; // string, if as sval, CorVMADT owns the string, need free the
+                // memory at constructor
   };
   ADT _data;
   SymbolType _tag;

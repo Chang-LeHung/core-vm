@@ -31,7 +31,8 @@ CoreVMADT::CoreVMADT(const CoreVMADT &adt)
   _tag = adt._tag;
   if (_tag == SymbolType::kString)
   {
-    _data.sval = (u8 *)new char[std::strlen((const char *)adt._data.sval) + 1];
+    _data.sval =
+        (char *)new char[std::strlen((const char *)adt._data.sval) + 1];
     std::strcpy((char *)_data.sval, (char *)adt._data.sval);
   }
   else
@@ -46,7 +47,7 @@ CoreVMADT::CoreVMADT(CoreVMADT &&adt)
   _data.lval = adt._data.lval;
   if (_tag == SymbolType::kString)
   {
-    adt._data.sval = (u8 *)nullptr;
+    adt._data.sval = (char *)nullptr;
   }
 }
 
@@ -55,7 +56,8 @@ CoreVMADT &CoreVMADT::operator=(const CoreVMADT &adt)
   _tag = adt._tag;
   if (_tag == SymbolType::kString)
   {
-    _data.sval = (u8 *)new char[std::strlen((const char *)adt._data.sval) + 1];
+    _data.sval =
+        (char *)new char[std::strlen((const char *)adt._data.sval) + 1];
     std::strcpy((char *)_data.sval, (char *)adt._data.sval);
   }
   else
@@ -71,7 +73,7 @@ CoreVMADT &CoreVMADT::operator=(CoreVMADT &&adt)
   _data.lval = adt._data.lval;
   if (_tag == SymbolType::kString)
   {
-    adt._data.sval = (u8 *)nullptr;
+    adt._data.sval = (char *)nullptr;
   }
   return *this;
 }
