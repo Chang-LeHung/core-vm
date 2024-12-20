@@ -75,4 +75,7 @@ private:
   inline int GetPos() { return _pos; }
 
   inline void SetPos(int pos) { _pos = pos; }
+
+public:
+  inline int SymTableSize() const { return _symbol_table.size(); }
 };

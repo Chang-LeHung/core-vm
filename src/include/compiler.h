@@ -18,6 +18,7 @@ private:
   std::shared_ptr<IR> _ir;
   std::ostringstream _os;
   int _code_size;
+  int _sym_size;
 
 public:
   Compiler(const std::string &filename) : _filename(filename), _code(nullptr) {}
@@ -31,4 +32,6 @@ public:
   inline std::shared_ptr<char> GetBinaryCode() const { return _code; }
 
   inline int GetCodeSize() const { return _code_size; }
+
+  inline int GetLocalVarTableSize() const { return _sym_size; }
 };

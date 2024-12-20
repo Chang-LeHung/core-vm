@@ -17,6 +17,7 @@ void Compiler::Compile()
   CVMAssembler assembler{1 K};
   _ir->Emit(assembler);
   _code_size = assembler.GetPos();
+  _sym_size = parser.SymTableSize();
   auto code = new char[_code_size];
   std::memcpy(code, assembler.GetCode(), _code_size);
   // using shared_ptr to avoid unnecessary memory copy.
