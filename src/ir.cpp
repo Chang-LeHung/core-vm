@@ -139,9 +139,9 @@ void FunctionCallIR::Emit(CVMAssembler &assembler) const
 
 void BinaryIR::Dump(std::ostream &os) const
 {
-  _lhs->Dump(os);
-  os << "\n";
   _rhs->Dump(os);
+  os << "\n";
+  _lhs->Dump(os);
   os << "\n";
   switch (GetOpCode())
   {
