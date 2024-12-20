@@ -52,7 +52,8 @@ int main(int argc, char **argv)
   Compiler compiler(filename);
   compiler.Compile();
   std::cout << compiler.GetByteCode() << std::endl;
-  hexdump_with_xxd(reinterpret_cast<const void *>(*compiler.GetBinaryCode()),
-                   compiler.GetCodeSize());
+  hexdump_with_xxd(
+      reinterpret_cast<const void *>(compiler.GetBinaryCode().get()),
+      compiler.GetCodeSize());
   return 0;
 }
