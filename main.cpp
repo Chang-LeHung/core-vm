@@ -4,10 +4,8 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <sys/wait.h>
-#include <vector>
 
 void Hexdump(const void *data, size_t size)
 {
