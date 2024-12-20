@@ -83,7 +83,8 @@ public:
     }
     assert(end < _capacity);
     char *offset = _code + _pos;
-    *(T *)offset = val;
+    // avoid misaligned runtime error caused by sanitizer
+    std::memcpy(offset, &val, sizeof(T));
     _pos += sizeof(T); // forward cursor
   }
 
@@ -105,5 +106,7 @@ public:
 
   inline const char *GetCode() const { return _code; }
 
+  inline const char *Size() const { return _code; }
+
   inline int GetPos() const { return _pos; }
-}; 
+};
