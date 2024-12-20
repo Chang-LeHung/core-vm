@@ -65,13 +65,13 @@ std::shared_ptr<IR> Parser::Term()
     {
       Next(); // eat the token
       auto rhs = Primary();
-      res = std::make_shared<BinaryIR>(OpCode::kIMul, res, rhs);
+      res = std::make_shared<BinaryIR>(res, rhs, '*');
     }
     else if (Next(false).IsDiv())
     {
       Next(); // eat the token
       auto rhs = Primary();
-      res = std::make_shared<BinaryIR>(OpCode::kIDiv, res, rhs);
+      res = std::make_shared<BinaryIR>(res, rhs, '/');
     }
     else
     {
@@ -201,12 +201,13 @@ std::shared_ptr<IR> Parser::Expression()
     if (Next(false).IsPlus())
     {
       Next();
-      res = std::make_shared<BinaryIR>(OpCode::kIAdd, res, Term());
+      // the exact opcode will be determined later according to the type
+      res = std::make_shared<BinaryIR>(res, Term(), '+');
     }
     else if (Next(false).IsMinus())
     {
       Next();
-      res = std::make_shared<BinaryIR>(OpCode::kISub, res, Term());
+      res = std::make_shared<BinaryIR>(res, Term(), '-');
     }
     else
       break;

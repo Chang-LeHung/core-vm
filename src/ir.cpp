@@ -103,31 +103,7 @@ void NopIR::Emit(CVMAssembler &assembler) const
 void CastIR::Emit(CVMAssembler &assembler) const
 {
   _ir->Emit(assembler);
-  switch (GetOpCode())
-  {
-  case OpCode::kICastD:
-    assembler.WriteStream(static_cast<u2>(OpCode::kICastD));
-    break;
-  case OpCode::kICastF:
-    assembler.WriteStream(static_cast<u2>(OpCode::kICastF));
-    break;
-  case OpCode::kICastL:
-    assembler.WriteStream(static_cast<u2>(OpCode::kICastL));
-    break;
-  case OpCode::kLCastD:
-    assembler.WriteStream(static_cast<u2>(OpCode::kLCastD));
-    break;
-  case OpCode::kLCastF:
-    assembler.WriteStream(static_cast<u2>(OpCode::kLCastF));
-    break;
-  case OpCode::kLCastI:
-    assembler.WriteStream(static_cast<u2>(OpCode::kLCastI));
-    break;
-  case OpCode::kNop: // same type
-    break;
-  default:
-    panic("unknown or unimplemented cast op", __FILE__, __LINE__);
-  }
+  assembler.WriteStream(static_cast<u2>(GetOpCode()));
 }
 
 void FunctionCallIR::Emit(CVMAssembler &assembler) const

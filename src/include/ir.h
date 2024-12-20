@@ -31,6 +31,8 @@ public:
 
   inline OpCode GetOpCode() const { return _opcode; }
 
+  inline void SetOpCode(OpCode opcode) { _opcode = opcode; }
+
   inline const char *GetName() { return _res_type.GetName().c_str(); }
 
   virtual void Emit(CVMAssembler &assembler) const {};
@@ -70,11 +72,61 @@ class BinaryIR : public IR
 private:
   std::shared_ptr<IR> _lhs;
   std::shared_ptr<IR> _rhs;
+  char _c;
 
 public:
-  BinaryIR(OpCode opcode, std::shared_ptr<IR> lhs, std::shared_ptr<IR> rhs)
-      : IR(opcode, lhs->GetResType()), _lhs(lhs), _rhs(rhs)
+  BinaryIR(std::shared_ptr<IR> lhs, std::shared_ptr<IR> rhs, char c)
+      : IR(OpCode::kNop, lhs->GetResType()), _lhs(lhs), _rhs(rhs), _c(c)
   {
+    if (_lhs->GetResType() != _rhs->GetResType())
+      panic("lhs and rhs mismatch", __FILE__, __LINE__);
+    switch (_c)
+    {
+    case '+':
+      if (_lhs->IsIntRes())
+        SetOpCode(OpCode::kIAdd);
+      else if (_lhs->IsLongRes())
+        SetOpCode(OpCode::kLAdd);
+      else if (_lhs->IsFloatRes())
+        SetOpCode(OpCode::kFAdd);
+      else
+        SetOpCode(OpCode::kDAdd);
+      break;
+    case '-':
+      if (_lhs->IsIntRes())
+        SetOpCode(OpCode::kISub);
+      else if (_lhs->IsLongRes())
+        SetOpCode(OpCode::kLSub);
+      else if (_lhs->IsFloatRes())
+        SetOpCode(OpCode::kFSub);
+      else
+        SetOpCode(OpCode::kDSub);
+      break;
+    case '*':
+      if (_lhs->IsIntRes())
+        SetOpCode(OpCode::kIMul);
+      else if (_lhs->IsLongRes())
+        SetOpCode(OpCode::kLMul);
+      else if (_lhs->IsFloatRes())
+        SetOpCode(OpCode::kFMul);
+      else
+        SetOpCode(OpCode::kDMul);
+      break;
+    case '/':
+      if (_lhs->IsIntRes())
+        SetOpCode(OpCode::kIDiv);
+      else if (_lhs->IsLongRes())
+        SetOpCode(OpCode::kLDiv);
+      else if (_lhs->IsFloatRes())
+        SetOpCode(OpCode::kFDiv);
+      else
+        SetOpCode(OpCode::kDDiv);
+      break;
+    default:
+      char buf[ERROR_MSG_LEN];
+      std::snprintf(buf, ERROR_MSG_LEN, "unknown binary operator %c", _c);
+      panic(buf, __FILE__, __LINE__);
+    }
   }
 
   virtual void Emit(CVMAssembler &assembler) const override;
