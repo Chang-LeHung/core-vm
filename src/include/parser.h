@@ -36,7 +36,7 @@ public:
 private:
   std::shared_ptr<IR> Program();
 
-  std::shared_ptr<AssignStmtIR> ExtraceAssignIR(const std::string &type_name,
+  std::shared_ptr<AssignStmtIR> ExtractAssignIR(const std::string &type_name,
                                                 const std::string &symbol,
                                                 int loc);
 
