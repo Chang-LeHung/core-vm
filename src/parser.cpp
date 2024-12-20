@@ -268,7 +268,7 @@ std::shared_ptr<IR> Parser::Primary()
   {
     auto pos = GetPos();
     const auto token = Next();
-    if (IsType(token) && HashNext() && Next().IsRParentheses())
+    if (IsType(token) && HashNext() && Next(false).IsRParentheses())
     {
       Next(); // eat rparentheses
       auto type = CVMType::GetOrCreateType(token.GetCharPtrADT());
