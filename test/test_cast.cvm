@@ -1,0 +1,4 @@
+
+
+
+int data = (int)1.1 + (int)1.2;
