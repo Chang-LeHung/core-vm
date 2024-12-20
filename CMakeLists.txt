@@ -34,8 +34,13 @@ add_executable(core-vm main.cpp ${SOURCE_FILES})
 add_executable(test_lexer test/test_lexer.cpp ${SOURCE_FILES})
 add_executable(test_parser test/test_parser.cpp ${SOURCE_FILES})
 add_executable(test_parser_cast test/test_parser_cast.cpp ${SOURCE_FILES})
+add_executable(test_verify test/test_verify.cpp ${SOURCE_FILES})
+
 
 enable_testing()
 add_test(NAME test_lexer COMMAND test_lexer ../test/test_lexer.cvm)
 add_test(NAME test_parser COMMAND test_parser ../test/test_parser.cvm)
 add_test(NAME test_cast COMMAND test_parser_cast ../test/test_cast.cvm)
+add_test(NAME test_verify_v1 COMMAND test_verify ../test/test_lexer.cvm)
+add_test(NAME test_verify_v2 COMMAND test_verify ../test/test_cast.cvm)
+add_test(NAME test_verify_v3 COMMAND test_verify ../test/test_parser.cvm)
