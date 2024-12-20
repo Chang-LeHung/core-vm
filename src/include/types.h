@@ -10,6 +10,10 @@
 #define u8 uint64_t
 #define f8 double
 #define f4 float
+#define i1 int8_t
+#define i2 int16_t
+#define i4 int32_t
+#define i8 int64_t
 #define MAX_VAR_LEN 64
 #define ERROR_MSG_LEN 128
 
