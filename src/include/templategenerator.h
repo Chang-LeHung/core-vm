@@ -69,12 +69,12 @@ public:
 // requiring it to restore them before returning to the caller.
 //
 // X29 (FP)
-// It is used as a frame pointer (FP) to keep track of the stack frame. More on
-// this later.
+// It is used as a frame pointer (FP) to keep track of the stack frame.
 //
 // X30 (LR)
-// It is the link register (LR) holding the return address of the function. More
-// on this later.
+// It is the link register (LR) holding the return address of the function.
+// reference:
+// https://medium.com/@tunacici7/aarch64-procedure-call-standard-aapcs64-abi-calling-conventions-machine-registers-a2c762540278
 class Arm64Assembler
 {
 private:
