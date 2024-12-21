@@ -2,9 +2,11 @@
 
 #pragma once
 
+#include "types.h"
 #include <cassert>
 #include <cstdint>
 #include <cstdlib>
+#include <string>
 #include <sys/mman.h>
 
 #define ALIGN(x, n) (((x) + (n) - 1) & ~((n) - 1))
@@ -22,10 +24,10 @@ private:
   int _capacity;
 
 public:
-  CodeBuffer(int size) : _code(nullptr), _capacity(size)
+  CodeBuffer(int size, void *base) : _code(nullptr), _capacity(size)
   {
     assert(size > 0);
-    _exact_code = mmap(NULL, _capacity, PROT_READ | PROT_WRITE | PROT_EXEC,
+    _exact_code = mmap(base, _capacity, PROT_READ | PROT_WRITE | PROT_EXEC,
                        MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     // round up to 2^2n arm64 instruction alignment (4 bytes)
     _code = (void *)ALIGN((uint64_t)_exact_code, 4);
@@ -50,8 +52,19 @@ public:
 
   uint64_t GetPos() { return (uint64_t)_pos; }
 
-  virtual ~CodeBuffer() { munmap(_code, _capacity); }
+  virtual ~CodeBuffer() { munmap(_exact_code, _capacity); }
 };
+
+struct reg
+{
+  std::string name;
+  u4 no;
+};
+
+#define REG(name, no) const reg name = {#name, no};
+#define DEF(name, no) extern const reg name;
+#define DEC_REG
+#include "arm64/arm64_regs.h"
 
 // X0 - X7
 // These registers are used for argument registers to pass parameters and
@@ -81,9 +94,41 @@ private:
   CodeBuffer _code_buffer;
 
 public:
-  Arm64Assembler(int size) : _code_buffer(ALIGN(size, 4)) {}
+  Arm64Assembler(int size, void *base) : _code_buffer(ALIGN(size, 4), base) {}
 
-  void bl(void *label);
+  [[maybe_unused]] void bl(void *label);
+
+  void blr(reg dst);
+
+  void mov_imm32(const reg &dst, const u4 imm);
+
+  void mov_imm64(const reg &dst, const u8 imm);
+
+  void ret(const reg &dst);
+
+  void mov32(const reg &dst, const reg &src);
+
+  void mov64(const reg &dst, const reg &src);
+
+  void str32(const reg &dst, const reg &src, int offset);
+
+  void str64(const reg &dst, const reg &src, int offset);
+
+  void ldr32(const reg &dst, const reg &src, int offset);
+
+  void ldr64(const reg &dst, const reg &src, int offset);
+
+  void str32_pre_index(const reg &dst, const reg &src, int offset);
+
+  void str64_pre_index(const reg &dst, const reg &src, int offset);
+
+  void add32(const reg &dst, const reg &src1, const reg &src2);
+
+  void add32(const reg &dst, const reg &src1, int imm);
+
+  void add64(const reg &dst, const reg &src1, const reg &src2);
+
+  void add64(const reg &dst, const reg &src1, int imm);
 
   void *NewCodeSnippet() { return _code_buffer.NewCodeSnippet(); }
 };

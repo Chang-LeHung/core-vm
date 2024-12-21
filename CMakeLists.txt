@@ -24,11 +24,13 @@ set(SOURCE_FILES
     src/types.cpp
     src/bytecodeinterpreter.cpp
     src/compiler.cpp
+    src/templategenerator.cpp
 )
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
 include_directories(src/include)
+include_directories(src/cpu)
 
 add_executable(core-vm main.cpp ${SOURCE_FILES})
 
@@ -39,6 +41,8 @@ add_executable(test_verify test/test_verify.cpp ${SOURCE_FILES})
 add_executable(test_asm test/test_asm.cpp ${SOURCE_FILES})
 add_executable(test_compiler test/test_compiler.cpp ${SOURCE_FILES})
 add_executable(test_interpreter test/test_interpreter.cpp ${SOURCE_FILES})
+add_executable(test_arm64 test/test_arm64.cpp ${SOURCE_FILES})
+
 
 enable_testing()
 add_test(NAME test_lexer COMMAND test_lexer ../test/test_lexer.cvm)
@@ -61,3 +65,5 @@ add_test(NAME test_compiler_v3 COMMAND test_compiler ../test/test_parser.cvm)
 add_test(NAME test_interpreter_v1 COMMAND test_interpreter ../test/test_lexer.cvm)
 add_test(NAME test_interpreter_v2 COMMAND test_interpreter ../test/test_cast.cvm)
 add_test(NAME test_interpreter_v3 COMMAND test_interpreter ../test/test_parser.cvm)
+
+add_test(NAME test_arm64 COMMAND test_arm64)

@@ -58,7 +58,7 @@ int main(int argc, char **argv)
       reinterpret_cast<const void *>(compiler.GetBinaryCode().get()),
       compiler.GetCodeSize());
   ByteCodeInterpreter interpreter(compiler.GetBinaryCode().get(),
-                                  compiler.GetCodeSize(), 1 K,
+                                  compiler.GetCodeSize(), 1 KB,
                                   compiler.GetLocalVarTableSize());
   interpreter.Run();
   return 0;
