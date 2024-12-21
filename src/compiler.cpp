@@ -14,7 +14,7 @@ void Compiler::Compile()
   Parser parser{result};
   _ir = parser.Build();
   _ir->Dump(_os);
-  CVMAssembler assembler{1 K};
+  CVMAssembler assembler{1 KB};
   _ir->Emit(assembler);
   _code_size = assembler.GetPos();
   _sym_size = parser.SymTableSize();

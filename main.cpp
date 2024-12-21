@@ -103,7 +103,7 @@ int main(int argc, char **argv)
   Compiler compiler(filename);
   compiler.Compile();
   ByteCodeInterpreter interpreter(compiler.GetBinaryCode().get(),
-                                  compiler.GetCodeSize(), 1 K,
+                                  compiler.GetCodeSize(), 1 KB,
                                   compiler.GetLocalVarTableSize());
   if (config.IsDumpBytecode())
   {
