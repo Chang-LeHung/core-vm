@@ -144,6 +144,10 @@ public:
 
   void div64(const reg &dst, const reg &src1, const reg &src2);
 
+  void ldrh(const reg &dst, const reg &src, int offset);
+
+  void strh(const reg &src, const reg &dst, int offset);
+
   void *NewCodeSnippet() { return _code_buffer.NewCodeSnippet(); }
 };
 
@@ -159,4 +163,20 @@ public:
   }
 
   void Gen();
+
+  void GenIAdd();
+
+  void GenISub();
+
+  void GenIMul();
+
+  void GenIDiv();
+
+  void GenIConst();
+
+  void GenStoreI();
+
+  void GenLoadI();
+
+  void GenPrintI();
 };

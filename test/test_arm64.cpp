@@ -216,6 +216,19 @@ static void test_div()
   assert(0x9ac00c20 == *(u4 *)base);
 }
 
+static void test_ldrh_strh()
+{
+  printf("test test_ldrh_strh\n");
+  Arm64Assembler assembler(1024, nullptr);
+  u8 base = (u8)assembler.NewCodeSnippet();
+  assembler.ldrh(X0, X0, 0);
+  assembler.strh(X0, SP, 6);
+  dump(base, 2);
+  assert(0x79400000 == *(u4 *)base);
+  base += 4;
+  assert(0x79000fe0 == *(u4 *)base);
+}
+
 int main()
 {
   test_move_imm32();
@@ -232,5 +245,6 @@ int main()
   test_sub();
   test_mul();
   test_div();
+  test_ldrh_strh();
   return 0;
 }

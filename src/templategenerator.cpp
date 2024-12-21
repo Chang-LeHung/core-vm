@@ -387,3 +387,25 @@ void Arm64Assembler::div64(const reg &dst, const reg &src1, const reg &src2)
   ins |= (src2.no << 16);
   _code_buffer.Emit(ins);
 }
+
+void Arm64Assembler::ldrh(const reg &dst, const reg &src, int offset)
+{
+  u4 ins = 0x79400000;
+  ins |= dst.no;
+  ins |= (src.no << 5);
+  offset >>= 1;
+  assert(offset >= 0 && offset <= (1 << 12));
+  ins |= (offset << 10);
+  _code_buffer.Emit(ins);
+}
+
+void Arm64Assembler::strh(const reg &src, const reg &dst, int offset)
+{
+  u4 ins = 0x79000000;
+  ins |= src.no;
+  ins |= (dst.no << 5);
+  offset >>= 1;
+  assert(offset >= 0 && offset <= (1 << 12));
+  ins |= (offset << 10);
+  _code_buffer.Emit(ins);
+}
