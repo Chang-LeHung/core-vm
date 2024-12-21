@@ -10,12 +10,6 @@
 #include <cstdlib>
 #include <sys/mman.h>
 
-void *bc_entry_table[1 << 8]; // 256 is engouh currently
-
-static void GenIConst()
-{
-}
-
 // it'd better if recommand_addr is equal to main
 // The jump range of the BL instruction is +/-128 MB.
 void GenerateBCEntryTable(void *recommend_addr)

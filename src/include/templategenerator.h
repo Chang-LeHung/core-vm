@@ -2,18 +2,16 @@
 
 #pragma once
 
+#include "compiler.h"
 #include "types.h"
 #include <cassert>
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 #include <string>
 #include <sys/mman.h>
 
 #define ALIGN(x, n) (((x) + (n) - 1) & ~((n) - 1))
-
-#ifndef template_generator
-extern void *bc_entry_table[]; // 256 is engouh currently
-#endif
 
 class CodeBuffer
 {
@@ -147,4 +145,18 @@ public:
   void div64(const reg &dst, const reg &src1, const reg &src2);
 
   void *NewCodeSnippet() { return _code_buffer.NewCodeSnippet(); }
+};
+
+class AsmGenerator
+{
+  void *bc_entry[1 << 8];
+  std::shared_ptr<Arm64Assembler> _asm;
+
+public:
+  AsmGenerator() : _asm(nullptr)
+  {
+    _asm = std::make_shared<Arm64Assembler>(4 KB, nullptr);
+  }
+
+  void Gen();
 };
