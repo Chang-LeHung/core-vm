@@ -130,5 +130,21 @@ public:
 
   void add64(const reg &dst, const reg &src1, int imm);
 
+  void sub32(const reg &dst, const reg &src1, const reg &src2);
+
+  void sub32(const reg &dst, const reg &src1, int imm);
+
+  void sub64(const reg &dst, const reg &src1, const reg &src2);
+
+  void sub64(const reg &dst, const reg &src1, int imm);
+
+  void mul32(const reg &dst, const reg &src1, const reg &src2);
+
+  void mul64(const reg &dst, const reg &src1, const reg &src2);
+
+  void div32(const reg &dst, const reg &src1, const reg &src2);
+
+  void div64(const reg &dst, const reg &src1, const reg &src2);
+
   void *NewCodeSnippet() { return _code_buffer.NewCodeSnippet(); }
 };

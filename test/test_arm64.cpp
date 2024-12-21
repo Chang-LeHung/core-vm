@@ -171,6 +171,51 @@ static void test_add64()
   assert(0x910043ff == *(u4 *)base);
 }
 
+void test_sub()
+{
+  printf("start test_sub\n");
+  Arm64Assembler assembler(1024, nullptr);
+  u8 base = (u8)assembler.NewCodeSnippet();
+  assembler.sub32(X0, X0, 0xa);
+  assembler.sub32(X0, X1, X0);
+  assembler.sub64(X0, X0, 0xa);
+  assembler.sub64(X0, X1, X0);
+  dump(base, 4);
+  assert(0x51002800 == *(u4 *)base);
+  base += 4;
+  assert(0x4b000020 == *(u4 *)base);
+  base += 4;
+  assert(0xd1002800 == *(u4 *)base);
+  base += 4;
+  assert(0xcb000020 == *(u4 *)base);
+}
+
+static void test_mul()
+{
+  printf("test mul\n");
+  Arm64Assembler assembler(1024, nullptr);
+  u8 base = (u8)assembler.NewCodeSnippet();
+  assembler.mul32(X0, X1, X0);
+  assembler.mul64(X0, X1, X0);
+  dump(base, 2);
+  assert(0x1b007c20 == *(u4 *)base);
+  base += 4;
+  assert(0x9b007c20 == *(u4 *)base);
+}
+
+static void test_div()
+{
+  printf("test div\n");
+  Arm64Assembler assembler(1024, nullptr);
+  u8 base = (u8)assembler.NewCodeSnippet();
+  assembler.div32(X0, X1, X0);
+  assembler.div64(X0, X1, X0);
+  dump(base, 2);
+  assert(0x1ac00c20 == *(u4 *)base);
+  base += 4;
+  assert(0x9ac00c20 == *(u4 *)base);
+}
+
 int main()
 {
   test_move_imm32();
@@ -184,5 +229,8 @@ int main()
   test_ldr64();
   test_add32();
   test_add64();
+  test_sub();
+  test_mul();
+  test_div();
   return 0;
 }

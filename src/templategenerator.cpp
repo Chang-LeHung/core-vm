@@ -309,3 +309,87 @@ void Arm64Assembler::add64(const reg &dst, const reg &src1, const reg &src2)
   ins |= (src2.no << 16);
   _code_buffer.Emit(ins);
 }
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/SUB--shifted-register---Subtract-optionally-shifted-register-?lang=en
+void Arm64Assembler::sub32(const reg &dst, const reg &src1, const reg &src2)
+{
+  u4 ins = 0x4b000000;
+  ins |= dst.no;
+  ins |= (src1.no << 5);
+  ins |= (src2.no << 16);
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/SUB--shifted-register---Subtract-optionally-shifted-register-?lang=en
+void Arm64Assembler::sub64(const reg &dst, const reg &src1, const reg &src2)
+{
+  u4 ins = 0xcb000000;
+  ins |= dst.no;
+  ins |= (src1.no << 5);
+  ins |= (src2.no << 16);
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/SUB--immediate---Subtract-immediate-value-?lang=en
+void Arm64Assembler::sub32(const reg &dst, const reg &src1, int imm)
+{
+  u4 ins = 0x51000000;
+  ins |= dst.no;
+  ins |= (src1.no << 5);
+  assert(imm >= 0 && imm <= 0xfff);
+  ins |= (imm << 10);
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/SUB--immediate---Subtract-immediate-value-?lang=en
+void Arm64Assembler::sub64(const reg &dst, const reg &src1, int imm)
+{
+  u4 ins = 0xd1000000;
+  ins |= dst.no;
+  ins |= (src1.no << 5);
+  assert(imm >= 0 && imm <= 0xfff);
+  ins |= (imm << 10);
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/MUL--Multiply--an-alias-of-MADD-?lang=en
+void Arm64Assembler::mul32(const reg &dst, const reg &src1, const reg &src2)
+{
+  u4 ins = 0x1b000000;
+  ins |= (0x1f << 10);
+  ins |= dst.no;
+  ins |= (src1.no << 5);
+  ins |= (src2.no << 16);
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/MUL--Multiply--an-alias-of-MADD-?lang=en
+void Arm64Assembler::mul64(const reg &dst, const reg &src1, const reg &src2)
+{
+  u4 ins = 0x9b000000;
+  ins |= (0x1f << 10);
+  ins |= dst.no;
+  ins |= (src1.no << 5);
+  ins |= (src2.no << 16);
+  _code_buffer.Emit(ins);
+}
+
+void Arm64Assembler::div32(const reg &dst, const reg &src1, const reg &src2)
+{
+  u4 ins = 0x1ac00000;
+  ins |= (0x3 << 10);
+  ins |= dst.no;
+  ins |= (src1.no << 5);
+  ins |= (src2.no << 16);
+  _code_buffer.Emit(ins);
+}
+
+void Arm64Assembler::div64(const reg &dst, const reg &src1, const reg &src2)
+{
+  u4 ins = 0x9ac00000;
+  ins |= (0x3 << 10);
+  ins |= dst.no;
+  ins |= (src1.no << 5);
+  ins |= (src2.no << 16);
+  _code_buffer.Emit(ins);
+}
