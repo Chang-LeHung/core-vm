@@ -5,8 +5,8 @@
 #include <sstream>
 #include <string>
 
-#define K *(1024)
-#define M (1024 * K)
+#define KB *(1024)
+#define MB *(1024 KB)
 
 void InitCompiler();
 
