@@ -562,3 +562,10 @@ void Arm64Assembler::stp_pre_index64(const reg &dst1, const reg &dst2,
   }
   _code_buffer.Emit(ins);
 }
+
+void Arm64Assembler::br(const reg &dst)
+{
+  u4 ins = 0xd61f0000;
+  ins |= (dst.no << 5);
+  _code_buffer.Emit(ins);
+}

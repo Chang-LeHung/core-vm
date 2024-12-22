@@ -172,6 +172,7 @@ public:
   void stp_pre_index64(const reg &dst1, const reg &dst2, const reg &src,
                        int offset);
 
+  void br(const reg &dst);
   void *NewCodeSnippet() { return _code_buffer.NewCodeSnippet(); }
 };
 
