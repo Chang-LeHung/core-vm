@@ -249,6 +249,16 @@ static void test_stp_pre_index64()
   assert(0xa9be7bfd == *(u4 *)base);
 }
 
+static void test_blr()
+{
+  printf("test test_blr\n");
+  Arm64Assembler assembler(1024, nullptr);
+  u8 base = (u8)assembler.NewCodeSnippet();
+  assembler.blr(X2);
+  dump(base, 1);
+  assert(0xd63f0040 == *(u4 *)base);
+}
+
 int main()
 {
   test_move_imm32();
@@ -268,5 +278,6 @@ int main()
   test_ldrh_strh();
   test_ldp_post_index64();
   test_stp_pre_index64();
+  test_blr();
   return 0;
 }

@@ -96,7 +96,7 @@ public:
 
   [[maybe_unused]] void bl(void *label);
 
-  void blr(reg dst);
+  void blr(const reg &dst);
 
   void mov_imm32(const reg &dst, const u4 imm);
 

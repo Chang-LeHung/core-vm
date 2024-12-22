@@ -39,7 +39,7 @@ void GenerateBCEntryTable(void *recommend_addr)
 
 // branch link implementation reference:
 // https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/BLR--Branch-with-link-to-register-?lang=en
-void Arm64Assembler::blr(reg dst)
+void Arm64Assembler::blr(const reg &dst)
 {
   u4 ins = 0xd63f0000;
   ins |= (dst.no << 5);
