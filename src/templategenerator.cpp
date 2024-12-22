@@ -1,5 +1,6 @@
 
 
+#include "opcode.h"
 #define template_generator
 #include "templategenerator.h"
 #define DEF_REG
@@ -568,4 +569,34 @@ void Arm64Assembler::br(const reg &dst)
   u4 ins = 0xd61f0000;
   ins |= (dst.no << 5);
   _code_buffer.Emit(ins);
+}
+
+void AsmGenerator::Gen()
+{
+  addr iadd = GenIAdd();
+  bc_entry[static_cast<u4>(OpCode::kIAdd)] = iadd;
+
+  addr isub = GenISub();
+  bc_entry[static_cast<u4>(OpCode::kISub)] = isub;
+
+  addr imul = GenIMul();
+  bc_entry[static_cast<u4>(OpCode::kIMul)] = imul;
+
+  addr idiv = GenIDiv();
+  bc_entry[static_cast<u4>(OpCode::kIDiv)] = idiv;
+
+  addr iconst = GenIConst();
+  bc_entry[static_cast<u4>(OpCode::kIConst)] = iconst;
+
+  addr storei = GenStoreI();
+  bc_entry[static_cast<u4>(OpCode::kStoreI)] = storei;
+
+  addr loadi = GenLoadI();
+  bc_entry[static_cast<u4>(OpCode::kLoadI)] = loadi;
+
+  addr printi = GenPrintI();
+  bc_entry[static_cast<u4>(OpCode::kPrintI)] = printi;
+
+  addr done = GenDone();
+  bc_entry[static_cast<u4>(OpCode::kDone)] = done;
 }

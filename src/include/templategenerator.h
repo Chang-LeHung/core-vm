@@ -173,8 +173,12 @@ public:
                        int offset);
 
   void br(const reg &dst);
+
+  void ldrsh(const reg &dst, const reg &src, int offset);
+
   void *NewCodeSnippet() { return _code_buffer.NewCodeSnippet(); }
 };
+typedef void *addr;
 
 class AsmGenerator
 {
@@ -187,21 +191,25 @@ public:
     _asm = std::make_shared<Arm64Assembler>(4 KB, nullptr);
   }
 
+  AsmGenerator(const AsmGenerator &) = default;
+
   void Gen();
 
-  void GenIAdd();
+  addr GenIAdd();
 
-  void GenISub();
+  addr GenISub();
 
-  void GenIMul();
+  addr GenIMul();
 
-  void GenIDiv();
+  addr GenIDiv();
 
-  void GenIConst();
+  addr GenIConst();
 
-  void GenStoreI();
+  addr GenStoreI();
 
-  void GenLoadI();
+  addr GenLoadI();
 
-  void GenPrintI();
+  addr GenPrintI();
+
+  addr GenDone();
 };
