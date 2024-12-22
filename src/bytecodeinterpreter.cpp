@@ -353,6 +353,9 @@ ByteCodeInterpreter::Run()
       _pc += 4;
       break;
     }
+    case OpCode::kDone:
+      // program ends here
+      return;
     default:
       char buf[ERROR_MSG_LEN];
       std::snprintf(buf, ERROR_MSG_LEN, "unimplemented bytecode %d",

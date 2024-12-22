@@ -53,4 +53,5 @@ enum class OpCode
   kProgram, // not bytecode
   kStmt,    // not bytecode
   kDef,     // not bytecode
+  kDone,    // program ends with kDone
 };

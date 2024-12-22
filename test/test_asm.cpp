@@ -85,7 +85,7 @@ int main(int argc, char **argv)
   CVMAssembler assembler(1024);
   ir->Emit(assembler);
   const char *code_buf = assembler.GetCode();
-  int size = assembler.GetPos();
+  int size = assembler.GetPos() - 2; // delete kDone
   hexdump_with_xxd(code_buf, size);
   if (!strcmp(filename, "../test/test_lexer.cvm"))
   {

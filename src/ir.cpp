@@ -83,6 +83,7 @@ void ProgramIR::Emit(CVMAssembler &assembler) const
   {
     ir->Emit(assembler);
   }
+  assembler.WriteStream(static_cast<u2>(OpCode::kDone));
 }
 
 void AssignStmtIR::Emit(CVMAssembler &assembler) const
