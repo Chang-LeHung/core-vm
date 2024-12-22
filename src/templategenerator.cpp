@@ -409,3 +409,156 @@ void Arm64Assembler::strh(const reg &src, const reg &dst, int offset)
   ins |= (offset << 10);
   _code_buffer.Emit(ins);
 }
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/LDP--Load-pair-of-registers-?lang=en
+void Arm64Assembler::ldp_pre_index64(const reg &src1, const reg &src2,
+                                     const reg &dst, int offset)
+{
+  u4 ins = 0xa9c00000;
+  ins |= src1.no;
+  ins |= (dst.no << 5);
+  ins |= (src2.no << 10);
+  assert((offset & 0x7) == 0);
+  assert(offset <= 504 && offset >= -512);
+  offset >>= 3;
+  ins |= (offset & 0x3f) << 15;
+  if (offset < 0)
+  {
+    ins |= (1 << 21);
+  }
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/LDP--Load-pair-of-registers-?lang=en
+void Arm64Assembler::ldp_pre_index32(const reg &src1, const reg &src2,
+                                     const reg &dst, int offset)
+{
+  u4 ins = 0x29c00000;
+  ins |= src1.no;
+  ins |= (dst.no << 5);
+  ins |= (src2.no << 10);
+  assert((offset & 0x3) == 0);
+  assert(offset <= 252 && offset >= -256);
+  offset >>= 2;
+  ins |= (offset & 0x3f) << 15;
+  if (offset < 0)
+  {
+    ins |= (1 << 21);
+  }
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/LDP--Load-pair-of-registers-?lang=en
+void Arm64Assembler::ldp_post_index64(const reg &src1, const reg &src2,
+                                      const reg &dst, int offset)
+{
+  u4 ins = 0xa8c00000;
+  ins |= src1.no;
+  ins |= (dst.no << 5);
+  ins |= (src2.no << 10);
+  assert((offset & 0x7) == 0);
+  assert(offset <= 504 && offset >= -512);
+  offset >>= 3;
+  ins |= (offset & 0x3f) << 15;
+  if (offset < 0)
+  {
+    ins |= (1 << 21);
+  }
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/LDP--Load-pair-of-registers-?lang=en
+void Arm64Assembler::ldp_post_index32(const reg &src1, const reg &src2,
+                                      const reg &dst, int offset)
+{
+  u4 ins = 0x29c00000;
+  ins |= src1.no;
+  ins |= (dst.no << 5);
+  ins |= (src2.no << 10);
+  assert((offset & 0x3) == 0);
+  assert(offset <= 252 && offset >= -256);
+  offset >>= 2;
+  ins |= (offset & 0x3f) << 15;
+  if (offset < 0)
+  {
+    ins |= (1 << 21);
+  }
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/STP--Store-pair-of-registers-?lang=en
+void Arm64Assembler::stp_post_index32(const reg &dst1, const reg &dst2,
+                                      const reg &src, int offset)
+{
+  u4 ins = 0x28800000;
+  ins |= dst1.no;
+  ins |= (dst2.no << 10);
+  ins |= (src.no << 5);
+  assert((offset & 0x3) == 0);
+  assert(offset <= 252 && offset >= -256);
+  offset >>= 2;
+  ins |= (offset & 0x3f) << 15;
+  if (offset < 0)
+  {
+    ins |= (1 << 21);
+  }
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/STP--Store-pair-of-registers-?lang=en
+void Arm64Assembler::stp_post_index64(const reg &dst1, const reg &dst2,
+                                      const reg &src, int offset)
+{
+  u4 ins = 0xa8800000;
+  ins |= dst1.no;
+  ins |= (dst2.no << 10);
+  ins |= (src.no << 5);
+  assert((offset & 0x7) == 0);
+  assert(offset <= 504 && offset >= -512);
+  offset >>= 3;
+  ins |= (offset & 0x3f) << 15;
+  if (offset < 0)
+  {
+    ins |= (1 << 21);
+  }
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/STP--Store-pair-of-registers-?lang=en
+void Arm64Assembler::stp_pre_index32(const reg &dst1, const reg &dst2,
+                                     const reg &src, int offset)
+{
+  u4 ins = 0x29800000;
+  ins |= dst1.no;
+  ins |= (dst2.no << 10);
+  ins |= (src.no << 5);
+  assert((offset & 0x3) == 0);
+  assert(offset <= 252 && offset >= -256);
+  offset >>= 2;
+  ins |= (offset & 0x3f) << 15;
+  if (offset < 0)
+  {
+    ins |= (1 << 21);
+  }
+  _code_buffer.Emit(ins);
+}
+
+// https://developer.arm.com/documentation/ddi0602/2024-12/Base-Instructions/STP--Store-pair-of-registers-?lang=en
+void Arm64Assembler::stp_pre_index64(const reg &dst1, const reg &dst2,
+                                     const reg &src, int offset)
+{
+
+  u4 ins = 0xa9800000;
+  ins |= dst1.no;
+  ins |= (dst2.no << 10);
+  ins |= (src.no << 5);
+  assert((offset & 0x7) == 0);
+  assert(offset <= 504 && offset >= -512);
+  offset >>= 3;
+  ins |= (offset & 0x3f) << 15;
+  if (offset < 0)
+  {
+    ins |= (1 << 21);
+  }
+  _code_buffer.Emit(ins);
+}

@@ -229,6 +229,26 @@ static void test_ldrh_strh()
   assert(0x79000fe0 == *(u4 *)base);
 }
 
+static void test_ldp_post_index64()
+{
+  printf("test test_ldp_pre_index64\n");
+  Arm64Assembler assembler(1024, nullptr);
+  u8 base = (u8)assembler.NewCodeSnippet();
+  assembler.ldp_post_index64(X29, X30, SP, 32);
+  dump(base, 1);
+  assert(0xa8c27bfd == *(u4 *)base);
+}
+
+static void test_stp_pre_index64()
+{
+  printf("test test_stp_pre_index64\n");
+  Arm64Assembler assembler(1024, nullptr);
+  u8 base = (u8)assembler.NewCodeSnippet();
+  assembler.stp_pre_index64(X29, X30, SP, -32);
+  dump(base, 1);
+  assert(0xa9be7bfd == *(u4 *)base);
+}
+
 int main()
 {
   test_move_imm32();
@@ -246,5 +266,7 @@ int main()
   test_mul();
   test_div();
   test_ldrh_strh();
+  test_ldp_post_index64();
+  test_stp_pre_index64();
   return 0;
 }

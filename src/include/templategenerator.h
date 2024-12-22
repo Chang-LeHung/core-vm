@@ -148,6 +148,30 @@ public:
 
   void strh(const reg &src, const reg &dst, int offset);
 
+  void ldp_pre_index64(const reg &src1, const reg &src2, const reg &dst,
+                       int offset);
+
+  void ldp_pre_index32(const reg &src1, const reg &src2, const reg &dst,
+                       int offset);
+
+  void ldp_post_index64(const reg &src1, const reg &src2, const reg &dst,
+                        int offset);
+
+  void ldp_post_index32(const reg &src1, const reg &src2, const reg &dst,
+                        int offset);
+
+  void stp_post_index32(const reg &dst1, const reg &dst2, const reg &src,
+                        int offset);
+
+  void stp_post_index64(const reg &dst1, const reg &dst2, const reg &src,
+                        int offset);
+
+  void stp_pre_index32(const reg &dst1, const reg &dst2, const reg &src,
+                       int offset);
+
+  void stp_pre_index64(const reg &dst1, const reg &dst2, const reg &src,
+                       int offset);
+
   void *NewCodeSnippet() { return _code_buffer.NewCodeSnippet(); }
 };
 
