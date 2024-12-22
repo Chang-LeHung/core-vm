@@ -30,6 +30,7 @@ void AsmInterpreter::Run()
 {
   trampoline((u1 *)_code, (u1 *)_bc_entry, (u1 *)_local_vars, (u1 *)_stack);
 }
+
 AsmInterpreter::~AsmInterpreter()
 {
   delete[] (u8 *)_stack;
