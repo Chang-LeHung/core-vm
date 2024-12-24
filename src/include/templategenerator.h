@@ -195,21 +195,21 @@ public:
 
   void Gen();
 
-  addr GenIAdd() {}
+  addr GenIAdd() { return (addr)0; }
 
-  addr GenISub() {}
+  addr GenISub() { return (addr)0; }
 
-  addr GenIMul() {}
+  addr GenIMul() { return (addr)0; }
 
-  addr GenIDiv() {}
+  addr GenIDiv() { return (addr)0; }
 
-  addr GenIConst() {}
+  addr GenIConst() { return (addr)0; }
 
-  addr GenStoreI() {}
+  addr GenStoreI() { return (addr)0; }
 
-  addr GenLoadI() {}
+  addr GenLoadI() { return (addr)0; }
 
-  addr GenPrintI() {}
+  addr GenPrintI() { return (addr)0; }
 
-  addr GenDone() {}
+  addr GenDone() { return (addr)0; }
 };

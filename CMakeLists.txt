@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(SANITIZER_FLAGS "-fsanitize=address,undefined,leak")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZER_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-Wno-unused-result ${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+    set(CMAKE_C_FLAGS " -Wno-unused-result ${CMAKE_C_FLAGS} ${SANITIZER_FLAGS}")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
