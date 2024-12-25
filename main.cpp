@@ -51,6 +51,7 @@ private:
   std::string _filename;
   bool _dump_bytecode;
   bool _dump_binary;
+  bool _use_asm;
 
 public:
   explicit CVMConfig(char **argv) : _dump_binary(false), _dump_bytecode(false)
@@ -79,6 +80,10 @@ public:
           std::cout << "-d: dump bytecode" << std::endl;
           std::cout << "-b: dump binary code" << std::endl;
           exit(EXIT_SUCCESS);
+        }
+        else if (arg == "-f")
+        {
+          _use_asm = true;
         }
       }
       else if (arg.size() > 3 && arg.ends_with(".cvm"))
