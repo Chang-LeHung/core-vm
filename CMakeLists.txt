@@ -3,6 +3,15 @@ project(core-vm)
 
 set(CMAKE_CXX_STANDARD 20)
 
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "amd64")
+    message(STATUS "This is an x86_64 (amd64) platform")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    message(STATUS "This is an ARM64 (aarch64) platform")
+else()
+    message(FATAL_ERROR "Unsupported platform architecture")
+endif()
+
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(SANITIZER_FLAGS "-fsanitize=address,undefined,leak")
     set(CMAKE_CXX_FLAGS "-Wno-unused-result ${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
