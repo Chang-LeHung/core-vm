@@ -78,10 +78,12 @@ add_test(NAME test_verify_v1 COMMAND test_verify ../test/test_lexer.cvm)
 add_test(NAME test_verify_v2 COMMAND test_verify ../test/test_cast.cvm)
 add_test(NAME test_verify_v3 COMMAND test_verify ../test/test_parser.cvm)
 
-add_test(NAME test_asm_v1 COMMAND test_asm ../test/test_lexer.cvm)
-add_test(NAME test_asm_v2 COMMAND test_asm ../test/test_cast.cvm)
-add_test(NAME test_asm_v3 COMMAND test_asm ../test/test_parser.cvm)
 
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    add_test(NAME test_asm_v1 COMMAND test_asm ../test/test_lexer.cvm)
+    add_test(NAME test_asm_v2 COMMAND test_asm ../test/test_cast.cvm)
+    add_test(NAME test_asm_v3 COMMAND test_asm ../test/test_parser.cvm)
+endif()
 
 add_test(NAME test_compiler_v1 COMMAND test_compiler ../test/test_lexer.cvm)
 add_test(NAME test_compiler_v2 COMMAND test_compiler ../test/test_cast.cvm)
