@@ -11,6 +11,7 @@
 #include <ostream>
 #include <sstream>
 #include <sys/wait.h>
+#include <unistd.h>
 #include <vector>
 
 void hexdump_with_xxd(const void *data, size_t size)

@@ -2,6 +2,7 @@
 #include "compiler.h"
 #include <iostream>
 #include <sys/wait.h>
+#include <unistd.h>
 
 void hexdump_with_xxd(const void *data, size_t size)
 {

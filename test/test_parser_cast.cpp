@@ -7,6 +7,7 @@
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include <unistd.h>
 #include <vector>
 
 int main(int argc, char **argv)

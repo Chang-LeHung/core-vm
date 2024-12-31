@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstdio>
 #include <fcntl.h>
+#include <unistd.h>
 
 static void dump(u8 base, int cnt)
 {
