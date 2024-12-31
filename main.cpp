@@ -121,6 +121,7 @@ int main(int argc, char **argv)
     std::cout << "BinaryCode:\n";
     Hexdump(compiler.GetBinaryCode().get(), compiler.GetCodeSize());
   }
+#if defined(__aarch64__) || defined(__arm64__)
   if (config.IsUseAsm())
   {
     AsmInterpreter interpreter(compiler.GetBinaryCode().get(),
@@ -134,5 +135,11 @@ int main(int argc, char **argv)
                                     compiler.GetLocalVarTableSize());
     interpreter.Run();
   }
+#else
+  ByteCodeInterpreter interpreter(compiler.GetBinaryCode().get(),
+                                  compiler.GetCodeSize(), 1 KB,
+                                  compiler.GetLocalVarTableSize());
+  interpreter.Run();
+#endif // __arm64__
   return 0;
 }
