@@ -23,7 +23,7 @@ AsmInterpreter::AsmInterpreter(const char *code, int code_size, int stack_size,
   _bc_entry[static_cast<u4>(OpCode::kStoreI)] = storei;
   _bc_entry[static_cast<u4>(OpCode::kPrintI)] = printi;
   _bc_entry[static_cast<u4>(OpCode::kIConst)] = iconst;
-  _bc_entry[static_cast<u4>(OpCode::kLoadI)] = iload;
+  _bc_entry[static_cast<u4>(OpCode::kLoadI)] = loadi;
 }
 
 void AsmInterpreter::Run()

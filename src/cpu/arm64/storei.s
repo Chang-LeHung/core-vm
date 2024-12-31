@@ -2,15 +2,16 @@
 
 
     .global storei 
+    .type storei, %function
 
 storei:
-    ; x0, x1, x2, x3, x7 are active
-    ; X0-X7 are parameters
-    ; X0 pc base
-    ; X1 bc_entry array base
-    ; X2 var_local_table_arr base
-    ; using X3 as cvm stack pointer
-    ; X7 as stack top val
+    // x0, x1, x2, x3, x7 are active
+    // X0-X7 are parameters
+    // X0 pc base
+    // X1 bc_entry array base
+    // X2 var_local_table_arr base
+    // using X3 as cvm stack pointer
+    // X7 as stack top val
     mov x9, #16
     add x0, x0, x9
     ldrsh w5, [x0]
@@ -19,7 +20,7 @@ storei:
     add x4, x2, x4
     str w7, [x4]
     ldr w7, [x3, #-8]
-    ; jump to next instruction
+    // jump to next instruction
     mov x9, #16
     add x0, x0, x9
     ldrsh w5, [x0]

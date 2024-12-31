@@ -8,15 +8,15 @@ extern "C"
 {
 
   typedef void *addr;
-  extern addr done;
-  extern addr iadd;
-  extern addr iload;
-  extern addr iconst;
-  extern addr idiv;
-  extern addr imul;
-  extern addr isub;
-  extern addr printi;
-  extern addr storei;
+  extern void done();
+  extern void iadd();
+  extern void loadi();
+  extern void iconst();
+  extern void idiv();
+  extern void imul();
+  extern void isub();
+  extern void printi();
+  extern void storei();
   extern void trampoline(u1 *, u1 *, u1 *, u1 *);
 #endif
 
@@ -24,10 +24,12 @@ extern "C"
 }
 #endif
 
+typedef void (*ins)();
+
 class AsmInterpreter
 {
 private:
-  addr _bc_entry[1 << 8];
+  ins _bc_entry[1 << 8];
   addr _stack;
   int _stack_size;
   addr _local_vars;

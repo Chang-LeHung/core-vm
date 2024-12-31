@@ -1,11 +1,24 @@
 cmake_minimum_required(VERSION 3.10)
 project(core-vm)
-
+enable_language(ASM)
 set(CMAKE_CXX_STANDARD 20)
 
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "amd64")
     message(STATUS "This is an x86_64 (amd64) platform")
 elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    set(
+        ASM_FILES
+        src/cpu/arm64/trampoline.s
+        src/cpu/arm64/done.s
+        src/cpu/arm64/iadd.s
+        src/cpu/arm64/imul.s
+        src/cpu/arm64/idiv.s
+        src/cpu/arm64/isub.s
+        src/cpu/arm64/loadi.s
+        src/cpu/arm64/storei.s
+        src/cpu/arm64/printi.s
+        src/cpu/arm64/iconst.s
+    )
     message(STATUS "This is an ARM64 (aarch64) platform")
 else()
     message(FATAL_ERROR "Unsupported platform architecture")
@@ -22,6 +35,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
 endif()
+set_source_files_properties(${ASM_FILES} PROPERTIES LANGUAGE ASM)
 
 set(SOURCE_FILES
     src/parser.cpp
@@ -34,6 +48,8 @@ set(SOURCE_FILES
     src/bytecodeinterpreter.cpp
     src/compiler.cpp
     src/templategenerator.cpp
+    src/asminterpreter.cpp
+    ${ASM_FILES}
 )
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
