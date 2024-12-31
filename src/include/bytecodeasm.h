@@ -40,7 +40,7 @@ public:
   AsmInterpreter(const char *code, int code_size, int stack_size,
                  int local_var_size);
 
-  void Run();
+  __attribute__((no_sanitize("address", "undefined", "leak"))) void Run();
 
   ~AsmInterpreter();
 };

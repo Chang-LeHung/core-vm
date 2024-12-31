@@ -17,7 +17,7 @@ idiv:
     ldr w9, [x3]
     sdiv w7, w7, w9 // w9 is dead now
     // jump to next instruction
-    mov x9, #16 // 2 bytes
+    mov x9, #2 // 2 bytes
     add x0, x0, x9
     ldrsh w5, [x0]
     mov x4, #8

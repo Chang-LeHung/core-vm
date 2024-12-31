@@ -1,4 +1,5 @@
 
+#include "bytecodeasm.h"
 #include "bytecodeinterpreter.h"
 #include "compiler.h"
 #include <cstddef>
@@ -98,6 +99,8 @@ public:
   inline bool IsDumpBinary() const { return _dump_binary; }
 
   inline bool IsDumpBytecode() const { return _dump_bytecode; }
+
+  inline bool IsUseAsm() const { return _use_asm; }
 };
 
 int main(int argc, char **argv)
@@ -107,9 +110,7 @@ int main(int argc, char **argv)
   const char *filename = argv[1];
   Compiler compiler(filename);
   compiler.Compile();
-  ByteCodeInterpreter interpreter(compiler.GetBinaryCode().get(),
-                                  compiler.GetCodeSize(), 1 KB,
-                                  compiler.GetLocalVarTableSize());
+
   if (config.IsDumpBytecode())
   {
     std::cout << "ByteCode:\n";
@@ -120,6 +121,18 @@ int main(int argc, char **argv)
     std::cout << "BinaryCode:\n";
     Hexdump(compiler.GetBinaryCode().get(), compiler.GetCodeSize());
   }
-  interpreter.Run();
+  if (config.IsUseAsm())
+  {
+    AsmInterpreter interpreter(compiler.GetBinaryCode().get(),
+                               compiler.GetCodeSize(), 1 KB, 1 KB);
+    interpreter.Run();
+  }
+  else
+  {
+    ByteCodeInterpreter interpreter(compiler.GetBinaryCode().get(),
+                                    compiler.GetCodeSize(), 1 KB,
+                                    compiler.GetLocalVarTableSize());
+    interpreter.Run();
+  }
   return 0;
 }

@@ -5,7 +5,7 @@
 .type printi, %function
 
 .data
-sym: .asciz "%d"
+sym: .asciz "%d\n"
 
 .text
 printi:
@@ -32,7 +32,7 @@ printi:
 
     str w7, [x3, #-8]!
     // jump to next instruction
-    mov x9, #16
+    mov x9, #2
     add x0, x0, x9
     ldrsh w5, [x0]
     mov x4, #8

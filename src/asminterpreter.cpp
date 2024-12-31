@@ -26,7 +26,8 @@ AsmInterpreter::AsmInterpreter(const char *code, int code_size, int stack_size,
   _bc_entry[static_cast<u4>(OpCode::kLoadI)] = loadi;
 }
 
-void AsmInterpreter::Run()
+__attribute__((no_sanitize("address", "undefined", "leak"))) void
+AsmInterpreter::Run()
 {
   trampoline((u1 *)_code, (u1 *)_bc_entry, (u1 *)_local_vars, (u1 *)_stack);
 }

@@ -12,7 +12,7 @@ storei:
     // X2 var_local_table_arr base
     // using X3 as cvm stack pointer
     // X7 as stack top val
-    mov x9, #16
+    mov x9, #2
     add x0, x0, x9
     ldrsh w5, [x0]
     mov x4, #8
@@ -21,7 +21,7 @@ storei:
     str w7, [x4]
     ldr w7, [x3, #-8]
     // jump to next instruction
-    mov x9, #16
+    mov x9, #2
     add x0, x0, x9
     ldrsh w5, [x0]
     mov x4, #8
