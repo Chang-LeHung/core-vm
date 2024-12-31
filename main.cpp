@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <sys/wait.h>
+#include <unistd.h>
 
 void Hexdump(const void *data, size_t size)
 {
