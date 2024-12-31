@@ -13,7 +13,7 @@ imul:
     // using X3 as cvm stack pointer
     // X7 as stack top val
     mov x4, #8
-    sub w3, w3, w4
+    sub x3, x3, x4
     ldr w9, [x3]
     mul w7, w7, w9 // w9 is dead now
     // jump to next instruction
